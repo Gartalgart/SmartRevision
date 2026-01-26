@@ -1,0 +1,81 @@
+import { StyleSheet } from 'react-native';
+
+export const colors = {
+    primary: '#6366f1',
+    secondary: '#8b5cf6',
+    success: '#10b981',
+    warning: '#f59e0b',
+    danger: '#ef4444',
+    background: '#f9fafb',
+    card: '#ffffff',
+    text: '#111827',
+    textSecondary: '#6b7280',
+    border: '#e5e7eb',
+    gray100: '#f3f4f6',
+    gray200: '#e5e7eb',
+    gray300: '#d1d5db',
+    gray400: '#9ca3af',
+    gray500: '#6b7280',
+    indigo50: '#eef2ff',
+    indigo100: '#e0e7ff',
+    indigo700: '#4338ca',
+    indigo800: '#3730a3',
+    emerald100: '#d1fae5',
+    amber100: '#fef3c7',
+};
+
+export const commonStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: colors.background,
+    },
+    card: {
+        backgroundColor: colors.card,
+        borderRadius: 24,
+        padding: 24,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 2,
+        borderWidth: 1,
+        borderColor: colors.gray100,
+    },
+    button: {
+        height: 56,
+        borderRadius: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+    },
+    buttonText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    input: {
+        backgroundColor: colors.card,
+        borderWidth: 1,
+        borderColor: colors.gray200,
+        borderRadius: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        fontSize: 16,
+        color: colors.text,
+    },
+    inputError: {
+        borderColor: colors.danger,
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: colors.textSecondary,
+        marginBottom: 4,
+        marginLeft: 4,
+    },
+    errorText: {
+        fontSize: 12,
+        color: colors.danger,
+        marginTop: 4,
+        marginLeft: 4,
+    },
+});
