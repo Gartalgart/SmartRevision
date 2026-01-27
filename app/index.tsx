@@ -4,7 +4,11 @@ import { colors, commonStyles } from '@/utils/styles';
 
 export default function Index() {
     // Redirection directe vers l'application sans authentification
-    return <Redirect href="/(tabs)/home" />;
+    return (
+        <View style={styles.center}>
+            <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({

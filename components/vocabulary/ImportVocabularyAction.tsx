@@ -27,7 +27,14 @@ export const ImportVocabularyAction = ({ folderId = null }: { folderId?: string 
 
             setLoading(true);
             const file = result.assets[0];
-            const content = await FileSystem.readAsStringAsync(file.uri);
+            let content = '';
+
+            if (Platform.OS === 'web') {
+                const response = await fetch(file.uri);
+                content = await response.text();
+            } else {
+                content = await FileSystem.readAsStringAsync(file.uri);
+            }
 
             let items: any[] = [];
 

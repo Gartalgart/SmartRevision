@@ -1,10 +1,11 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useSegments, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import 'react-native-reanimated';
+import { supabase } from '@/services/supabase';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -25,6 +26,8 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
+  const segments = useSegments();
+  const router = useRouter();
 
   useEffect(() => {
     if (error) throw error;
@@ -35,6 +38,30 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    const inAuthGroup = segments[0] === '(auth)';
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session && !inAuthGroup) {
+        router.replace('/(auth)/login');
+      } else if (session && inAuthGroup) {
+        router.replace('/(tabs)/home');
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session && !inAuthGroup) {
+        router.replace('/(auth)/login');
+      } else if (session && inAuthGroup) {
+        router.replace('/(tabs)/home');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [loaded, segments]);
 
   if (!loaded) {
     return null;
