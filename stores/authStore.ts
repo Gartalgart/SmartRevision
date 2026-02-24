@@ -1,32 +1,26 @@
 import { create } from 'zustand'
-import { Session } from '@supabase/supabase-js'
-import { supabase } from '@/services/supabase'
 
 interface AuthState {
-    session: Session | null
+    session: { user: { id: string; email: string } } | null
     loading: boolean
     initialize: () => Promise<void>
-    signOut: () => Promise<void>
+    signOut: () => Promise<void> // On garde signOut pour compatibilité, mais il ne fera rien d'utile en local
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-    session: null,
-    loading: true,
-    initialize: async () => {
-        try {
-            const { data: { session } } = await supabase.auth.getSession()
-            set({ session, loading: false })
+const LOCAL_USER = {
+    id: '00000000-0000-0000-0000-000000000000',
+    email: 'local@smartrevision.app'
+};
 
-            supabase.auth.onAuthStateChange((_event, session) => {
-                set({ session })
-            })
-        } catch (error) {
-            console.error('Auth initialization error:', error)
-            set({ loading: false })
-        }
+export const useAuthStore = create<AuthState>((set) => ({
+    session: { user: LOCAL_USER }, // Session active par défaut !
+    loading: false, // Plus de chargement initial bloquant
+    initialize: async () => {
+        // En mode local, on est toujours connecté.
+        set({ session: { user: LOCAL_USER }, loading: false });
     },
     signOut: async () => {
-        await supabase.auth.signOut()
-        set({ session: null })
+        // En local, se déconnecter ne fait pas grand sens, mais on peut simuler
+        console.log("Déconnexion simulée (Mode local)");
     },
 }))

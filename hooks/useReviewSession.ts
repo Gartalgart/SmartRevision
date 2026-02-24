@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ProgressService } from '@/services/progress.service'
+import { VocabularyService } from '@/services/vocabulary.service'
 import { Difficulty } from '@/utils/sm2'
 
 export const useReviewSession = (folderId: string | null = null) => {
@@ -17,7 +18,7 @@ export const useReviewSession = (folderId: string | null = null) => {
 
     const allWordsQuery = useQuery({
         queryKey: ['all-vocabulary'],
-        queryFn: () => require('@/services/vocabulary.service').VocabularyService.getAllWords(),
+        queryFn: () => VocabularyService.getAllWords(),
     })
 
     const submitReviewMutation = useMutation({

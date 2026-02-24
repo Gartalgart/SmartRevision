@@ -1,22 +1,21 @@
+import 'react-native-reanimated';
+import '../global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import { Stack, useSegments, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import 'react-native-reanimated';
-import { supabase } from '@/services/supabase';
+import { useAuthStore } from '@/stores/authStore';
 
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
 
 export const unstable_settings = {
-  initialRouteName: 'index',
+  initialRouteName: '(tabs)', // On vise directement les tabs
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
@@ -26,11 +25,9 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
-  const segments = useSegments();
-  const router = useRouter();
 
   useEffect(() => {
-    if (error) throw error;
+    if (error) console.error('Erreur chargement polices:', error);
   }, [error]);
 
   useEffect(() => {
@@ -38,30 +35,6 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
-
-  useEffect(() => {
-    if (!loaded) return;
-
-    const inAuthGroup = segments[0] === '(auth)';
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session && !inAuthGroup) {
-        router.replace('/(auth)/login');
-      } else if (session && inAuthGroup) {
-        router.replace('/(tabs)/home');
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session && !inAuthGroup) {
-        router.replace('/(auth)/login');
-      } else if (session && inAuthGroup) {
-        router.replace('/(tabs)/home');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [loaded, segments]);
 
   if (!loaded) {
     return null;
@@ -75,17 +48,22 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const { initialize } = useAuthStore();
+
+  useEffect(() => {
+    // Initialisation simple
+    initialize();
+  }, []);
+
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#f9fafb' } }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="review"
         options={{
           presentation: 'modal',
           headerShown: true,
           title: 'Révision',
-          headerBackTitle: 'Fermer'
         }}
       />
       <Stack.Screen
@@ -94,7 +72,6 @@ function RootLayoutNav() {
           presentation: 'modal',
           headerShown: true,
           title: 'Nouveau mot',
-          headerBackTitle: 'Annuler'
         }}
       />
     </Stack>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useReviewSession } from '@/hooks/useReviewSession';
 import { FlashCard } from '@/components/flashcards/FlashCard';
@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/Card';
 import { Difficulty } from '@/utils/sm2';
 import { colors, commonStyles } from '@/utils/styles';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import * as Speech from 'expo-speech';
 
 type ReviewMode = 'flashcard' | 'qcm-eng' | 'qcm-fra';
 
@@ -24,6 +25,7 @@ export default function Review() {
     const [sessionComplete, setSessionComplete] = useState(false);
     const [correctCount, setCorrectCount] = useState(0);
     const [sessionQueue, setSessionQueue] = useState<any[]>([]);
+    const [autoPlay, setAutoPlay] = useState(true);
 
     useEffect(() => {
         if (dueReviews && dueReviews.length > 0 && sessionQueue.length === 0) {
@@ -32,6 +34,18 @@ export default function Review() {
     }, [dueReviews]);
 
     const currentCard = sessionQueue[currentIndex];
+
+    // Prononcer automatiquement le mot anglais
+    useEffect(() => {
+        if (currentCard && autoPlay && mode !== 'qcm-fra') {
+            speak(currentCard.english_word);
+        }
+    }, [currentCard, mode]);
+
+    const speak = (text: string) => {
+        Speech.stop();
+        Speech.speak(text, { language: 'en-US', rate: 0.9 });
+    };
 
     const handleRate = async (difficulty: Difficulty) => {
         if (!currentCard) return;
@@ -54,6 +68,7 @@ export default function Review() {
             }
         } catch (e) {
             console.error(e);
+            Alert.alert("Erreur", "Impossible de sauvegarder la révision.");
         }
     };
 
@@ -152,21 +167,34 @@ export default function Review() {
                 <Text style={styles.progressText}>
                     Mot {currentIndex + 1} sur {sessionQueue.length}
                 </Text>
-                <TouchableOpacity onPress={() => setMode(null)}>
-                    <Text style={styles.changeModeText}>Changer de mode</Text>
-                </TouchableOpacity>
+                <View style={styles.topActions}>
+                    <TouchableOpacity onPress={() => setAutoPlay(!autoPlay)} style={styles.iconButton}>
+                        <FontAwesome name={autoPlay ? "volume-up" : "volume-off"} size={20} color={colors.primary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setMode(null)}>
+                        <Text style={styles.changeModeText}>Quitter</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
 
             {/* Card Area */}
             <View style={styles.cardContainer}>
                 {mode === 'flashcard' ? (
-                    <FlashCard
-                        key={currentCard.id}
-                        englishWord={currentCard.english_word}
-                        frenchTranslation={currentCard.french_translation}
-                        exampleSentence={currentCard.example_sentence}
-                        onFlip={setIsFlipped}
-                    />
+                    <View>
+                        <FlashCard
+                            key={currentCard.id}
+                            englishWord={currentCard.english_word}
+                            frenchTranslation={currentCard.french_translation}
+                            exampleSentence={currentCard.example_sentence}
+                            onFlip={setIsFlipped}
+                        />
+                         <TouchableOpacity 
+                            style={styles.speakButtonOverlay} 
+                            onPress={() => speak(currentCard.english_word)}
+                        >
+                             <FontAwesome name="volume-up" size={24} color={colors.primary} />
+                        </TouchableOpacity>
+                    </View>
                 ) : (
                     <MCQReview
                         key={currentCard.id}
@@ -242,8 +270,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 24,
     },
+    topActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 16,
+    },
+    iconButton: {
+        padding: 4,
+    },
     changeModeText: {
-        color: colors.primary,
+        color: colors.danger,
         fontSize: 12,
         fontWeight: 'bold',
     },
@@ -268,6 +304,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         marginBottom: 32,
+        position: 'relative',
+    },
+    speakButtonOverlay: {
+        position: 'absolute',
+        top: 20,
+        right: 20,
+        zIndex: 10,
+        backgroundColor: 'rgba(255,255,255,0.8)',
+        padding: 8,
+        borderRadius: 20,
     },
     controlsContainer: {
         height: 96,
