@@ -4,14 +4,14 @@ on:
   workflow_dispatch: # Pour lancer manuellement
   push:
     tags:
-      - 'v*' # Se lance si tu crées un tag (version)
+      - 'v*'
 
 jobs:
   build-android:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./mobile/android
+        working-directory: ./android
 
     steps:
       - name: Checkout code
@@ -24,19 +24,16 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # On donne les droits d'exécution au script de build
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # On construit l'APK en mode Debug (plus simple pour commencer)
       - name: Build Android APK (Debug)
         run: ./gradlew assembleDebug
 
-      # On envoie l'APK sur Firebase App Distribution
       - name: Upload Artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIALS }}
           groups: testers
-          file: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          file: android/app/build/outputs/apk/debug/app-debug.apk
