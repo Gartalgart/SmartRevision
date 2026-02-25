@@ -1,0 +1,60 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [ "master", "main" ] # Se déclenche quand tu push sur master ou main
+    paths:
+      - 'server/**' # Uniquement si on touche au dossier server
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./server
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+  deploy-to-vps:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to DigitalOcean Droplet
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # On se place dans le dossier
+            cd smartrevision-db
+            
+            # On se connecte au registre GitHub pour pouvoir télécharger l'image
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
+            # On télécharge la nouvelle version
+            docker compose pull api
+            
+            # On relance (seul le container api redémarrera, la db ne bougera pas)
+            docker compose up -d

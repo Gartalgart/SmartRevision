@@ -1,30 +1,27 @@
-const sql = require('mssql');
-require('dotenv').config();
+const { Pool } = require('pg');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-const config = {
+const pool = new Pool({
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER,
+    host: process.env.DB_HOST,
     database: process.env.DB_DATABASE,
-    options: {
-        encrypt: false,
-        trustServerCertificate: true,
-    },
-};
-
-console.log('Tentative de connexion avec :', {
-    user: config.user,
-    server: config.server,
-    database: config.database
+    password: process.env.DB_PASSWORD,
+    port: parseInt(process.env.DB_PORT || '5432'),
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
 });
 
-sql.connect(config)
-    .then(pool => {
-        console.log('✅ SUCCÈS : Connecté à SQL Server !');
-        return pool.request().query('SELECT 1 as test');
-    })
+console.log('Tentative de connexion PostgreSQL avec :', {
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE,
+    port: process.env.DB_PORT
+});
+
+pool.query('SELECT NOW() as test')
     .then(result => {
-        console.log('✅ REQUÊTE RÉUSSIE :', result.recordset);
+        console.log('✅ SUCCÈS : Connecté à PostgreSQL !');
+        console.log('✅ REQUÊTE RÉUSSIE (Heure du serveur) :', result.rows[0].test);
         process.exit(0);
     })
     .catch(err => {

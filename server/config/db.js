@@ -1,42 +1,46 @@
-const sql = require('mssql');
-require('dotenv').config();
+const { Pool } = require('pg');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
-const config = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER || 'localhost',
-    database: process.env.DB_DATABASE,
-    options: {
-        encrypt: false, // true pour Azure, false pour local
-        trustServerCertificate: true, // pour le dev local
-        enableArithAbort: true
-    },
-    // Meilleures pratiques pour le pool
-    pool: {
-        max: 10,
-        min: 0,
-        idleTimeoutMillis: 30000
-    }
-};
+/**
+ * Configuration de la base de données PostgreSQL
+ * Supporte soit une DATABASE_URL complète, soit des variables individuelles
+ */
+const poolConfig = process.env.DATABASE_URL 
+    ? { connectionString: process.env.DATABASE_URL }
+    : {
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_DATABASE,
+        password: process.env.DB_PASSWORD,
+        port: parseInt(process.env.DB_PORT || '5432'),
+    };
 
-// Singleton pour le pool de connexion
-let poolPromise = null;
+// Configuration SSL (indispensable pour Supabase/DigitalOcean en production)
+if (process.env.DB_SSL === 'true') {
+    poolConfig.ssl = {
+        rejectUnauthorized: false
+    };
+}
 
-const getPool = async () => {
-    if (poolPromise) return poolPromise;
+const pool = new Pool(poolConfig);
 
-    try {
-        poolPromise = await new sql.ConnectionPool(config).connect();
-        console.log('✅ Base de données connectée (Pool)');
-        return poolPromise;
-    } catch (err) {
-        console.error('❌ Échec connexion SQL :', err.message);
-        poolPromise = null;
-        throw err;
-    }
-};
+// Événement d'erreur sur le pool pour éviter les crashs en cas de perte de connexion
+pool.on('error', (err) => {
+    console.error('⚠️ Erreur inattendue sur le pool PostgreSQL :', err);
+});
+
+// Test de connexion initial
+pool.connect()
+    .then(client => {
+        console.log('✅ Base de données PostgreSQL connectée');
+        client.release();
+    })
+    .catch(err => {
+        console.error('❌ Échec connexion PostgreSQL :', err.stack);
+    });
 
 module.exports = {
-    sql,
-    getPool
+    query: (text, params) => pool.query(text, params),
+    pool
 };
