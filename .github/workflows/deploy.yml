@@ -6,6 +6,10 @@ on:
     paths:
       - 'server/**'
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: gartalgart/smartrevision-backend
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -20,7 +24,7 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -29,8 +33,7 @@ jobs:
         with:
           context: ./server
           push: true
-          # ICI : On écrit tout en minuscules manuellement
-          tags: ghcr.io/gartalgart/smartrevision-backend:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
   deploy-to-vps:
     needs: build-and-push
@@ -46,6 +49,5 @@ jobs:
           script: |
             cd smartrevision-db
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            # On s'assure que l'image dans docker-compose correspond bien à ghcr.io/gartalgart/smartrevision-backend:latest
             docker compose pull api
             docker compose up -d
