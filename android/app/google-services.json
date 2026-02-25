@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "854095214440",
+    "project_id": "smartrevision-1263f",
+    "storage_bucket": "smartrevision-1263f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:854095214440:android:c40e166e3f8b47b7c988dd",
+        "android_client_info": {
+          "package_name": "com.smartrevision"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCt4ogBe0oTwR1uQx93JeH7Q8kl8fUO7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
