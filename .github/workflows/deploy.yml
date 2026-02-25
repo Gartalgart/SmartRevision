@@ -2,13 +2,9 @@ name: Deploy Backend
 
 on:
   push:
-    branches: [ "master", "main" ] # Se déclenche quand tu push sur master ou main
+    branches: [ "master", "main" ]
     paths:
-      - 'server/**' # Uniquement si on touche au dossier server
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: gartalgart/smartrevision-backend
+      - 'server/**'
 
 jobs:
   build-and-push:
@@ -21,13 +17,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Lowercase Repo Name
-        run: echo "IMAGE_NAME_LOWER=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -36,28 +29,23 @@ jobs:
         with:
           context: ./server
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:latest
+          # ICI : On écrit tout en minuscules manuellement
+          tags: ghcr.io/gartalgart/smartrevision-backend:latest
 
   deploy-to-vps:
     needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to DigitalOcean Droplet
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # On se place dans le dossier
             cd smartrevision-db
-            
-            # On se connecte au registre GitHub pour pouvoir télécharger l'image
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            
-            # On télécharge la nouvelle version
+            # On s'assure que l'image dans docker-compose correspond bien à ghcr.io/gartalgart/smartrevision-backend:latest
             docker compose pull api
-            
-            # On relance (seul le container api redémarrera, la db ne bougera pas)
             docker compose up -d
