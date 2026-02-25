@@ -1,4 +1,4 @@
-name: Build & Distribute Android App
+name: Build & Distribute Android App (NOUVEAU)
 
 on:
   workflow_dispatch: # Pour lancer manuellement
