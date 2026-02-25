@@ -9,6 +9,8 @@ on:
 jobs:
   build-android:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
     defaults:
       run:
         working-directory: ./android
