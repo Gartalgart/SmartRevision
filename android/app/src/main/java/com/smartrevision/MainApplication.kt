@@ -1,4 +1,4 @@
-package com.gartalgart.smartrevision
+package com.smartrevision
 
 import android.app.Application
 import android.content.res.Configuration

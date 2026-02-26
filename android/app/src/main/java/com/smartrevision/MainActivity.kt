@@ -1,4 +1,4 @@
-package com.gartalgart.smartrevision
+package com.smartrevision
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
