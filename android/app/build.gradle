@@ -88,9 +88,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.smartrevision"
+    namespace "com.gartalgart.smartrevision"
     defaultConfig {
-        applicationId "com.smartrevision"
+        applicationId "com.gartalgart.smartrevision"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
