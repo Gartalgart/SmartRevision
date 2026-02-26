@@ -41,7 +41,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Android APK (Debug)
-        run: ./gradlew assembleDebug
+        run: ./gradlew clean assembleDebug
 
       - name: Upload Artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
