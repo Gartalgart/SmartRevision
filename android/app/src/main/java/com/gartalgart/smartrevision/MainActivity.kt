@@ -65,3 +65,4 @@ class MainActivity : ReactActivity() {
       super.invokeDefaultOnBackPressed()
   }
 }
+// Sync trigger: 2026-02-26
