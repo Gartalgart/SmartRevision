@@ -25,7 +25,6 @@ pluginManagement {
 plugins {
   id("com.facebook.react.settings")
   id("expo-autolinking-settings")
-  id("com.google.gms.google-services") version "4.4.2" apply false
 }
 
 extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
@@ -42,6 +41,4 @@ rootProject.name = 'SmartRevisionApp'
 expoAutolinking.useExpoVersionCatalog()
 
 include ':app'
-includeBuild(expoAutolinking.reactNativeGradlePlugin)
-
-// Force push trigger: 20260226-134745
+includeBuild(expoAutolinking.reactNativeGradlePlugin)   
