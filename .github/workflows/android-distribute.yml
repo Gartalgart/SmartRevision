@@ -43,12 +43,12 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Android APK (Debug)
-        run: ./gradlew clean assembleDebug
+        run: ./gradlew assembleDebug # Suppression du clean pour gagner du temps
 
       - name: Upload Artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIALS }}
+          token: ${{ secrets.FIREBASE_TOKEN }} # Utilisation du Token (plus fiable)
           groups: testers
           file: android/app/build/outputs/apk/debug/app-debug.apk
