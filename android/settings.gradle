@@ -32,7 +32,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
 }
 expoAutolinking.useExpoModules()
 
-rootProject.name = 'Smart Revision'
+rootProject.name = 'SmartRevisionApp'
 
 expoAutolinking.useExpoVersionCatalog()
 
