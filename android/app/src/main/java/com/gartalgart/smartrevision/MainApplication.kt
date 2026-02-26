@@ -1,5 +1,7 @@
 package com.gartalgart.smartrevision
 
+import com.gartalgart.smartrevision.BuildConfig
+
 import android.app.Application
 import android.content.res.Configuration
 
