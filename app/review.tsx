@@ -8,7 +8,7 @@ import { DifficultyButtons } from '@/components/flashcards/DifficultyButtons';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Difficulty } from '@/utils/sm2';
-import { colors, commonStyles } from '@/utils/styles';
+import { colors, commonStyles } from '../utils/styles';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Speech from 'expo-speech';
 

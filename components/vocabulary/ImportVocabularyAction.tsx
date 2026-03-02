@@ -7,7 +7,7 @@ import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { VocabularyService } from '@/services/vocabulary.service';
 import { useQueryClient } from '@tanstack/react-query';
-import { colors } from '@/utils/styles';
+import { colors } from '../../utils/styles';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export const ImportVocabularyAction = ({ folderId = null }: { folderId?: string | null }) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { Card } from '../ui/Card';
-import { colors } from '@/utils/styles';
+import { colors } from '../../utils/styles';
 import { VocabularyItem } from '@/services/vocabulary.service';
 
 interface MCQReviewProps {

@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useVocabulary } from '@/hooks/useVocabulary';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { commonStyles } from '@/utils/styles';
+import { commonStyles } from '../utils/styles';
 
 export default function AddWord() {
     const router = useRouter();

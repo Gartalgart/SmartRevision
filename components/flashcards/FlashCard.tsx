@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { colors } from '@/utils/styles';
+import { colors } from '../../utils/styles';
 
 interface FlashCardProps {
     englishWord: string;

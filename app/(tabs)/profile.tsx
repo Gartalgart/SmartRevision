@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useReviewSession } from '@/hooks/useReviewSession';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { colors, commonStyles } from '@/utils/styles';
+import { colors, commonStyles } from '../../utils/styles';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFocusEffect } from 'expo-router';
 

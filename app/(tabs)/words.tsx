@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { colors, commonStyles } from '@/utils/styles';
+import { colors, commonStyles } from '../../utils/styles';
 import { ImportVocabularyAction } from '@/components/vocabulary/ImportVocabularyAction';
 import { FolderService, Folder } from '@/services/folder.service';
 

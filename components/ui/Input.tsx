@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextInput, View, Text, TextInputProps, StyleSheet } from 'react-native';
-import { colors, commonStyles } from '@/utils/styles';
+import { colors, commonStyles } from '../../utils/styles';
 
 interface InputProps extends TextInputProps {
     label?: string;

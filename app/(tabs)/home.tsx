@@ -5,7 +5,7 @@ import { useReviewSession } from '@/hooks/useReviewSession';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { colors, commonStyles } from '@/utils/styles';
+import { colors, commonStyles } from '../../utils/styles';
 
 const { width } = Dimensions.get('window');
 

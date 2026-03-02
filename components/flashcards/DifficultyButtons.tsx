@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { Difficulty } from '@/utils/sm2';
-import { colors } from '@/utils/styles';
+import { colors } from '../../utils/styles';
 
 interface DifficultyButtonsProps {
     onRate: (difficulty: Difficulty) => void;
