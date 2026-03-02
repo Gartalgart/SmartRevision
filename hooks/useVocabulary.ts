@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { VocabularyService, NewVocabularyItem } from '@/services/vocabulary.service'
+import { VocabularyService, NewVocabularyItem } from '../services/vocabulary.service'
 
 export const useVocabulary = (folderId: string | null = null) => {
     const queryClient = useQueryClient()

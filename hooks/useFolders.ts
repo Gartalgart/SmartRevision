@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FolderService, Folder } from '@/services/folder.service';
+import { FolderService, Folder } from '../services/folder.service';
 
 export const useFolders = (parentId: string | null = null) => {
     const queryClient = useQueryClient();

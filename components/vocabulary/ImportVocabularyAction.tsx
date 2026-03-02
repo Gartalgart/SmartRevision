@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import Papa from 'papaparse';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
-import { VocabularyService } from '@/services/vocabulary.service';
+import { VocabularyService } from '../../services/vocabulary.service';
 import { useQueryClient } from '@tanstack/react-query';
 import { colors } from '../../utils/styles';
 import FontAwesome from '@expo/vector-icons/FontAwesome';

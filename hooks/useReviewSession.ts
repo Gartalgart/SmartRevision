@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ProgressService } from '@/services/progress.service'
-import { VocabularyService } from '@/services/vocabulary.service'
-import { Difficulty } from '@/utils/sm2'
+import { ProgressService } from '../services/progress.service'
+import { VocabularyService } from '../services/vocabulary.service'
+import { Difficulty } from '../utils/sm2'
 
 export const useReviewSession = (folderId: string | null = null) => {
     const queryClient = useQueryClient()

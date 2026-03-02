@@ -1,5 +1,5 @@
 import { apiClient } from './api.client'
-import { Difficulty } from '@/utils/sm2'
+import { Difficulty } from '../utils/sm2'
 
 export const ProgressService = {
     async getDueReviews(folderId: string | null = null) {

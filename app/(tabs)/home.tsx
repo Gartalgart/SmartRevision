@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { View, Text, ScrollView, RefreshControl, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { useReviewSession } from '@/hooks/useReviewSession';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { useReviewSession } from '../../hooks/useReviewSession';
+import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { colors, commonStyles } from '../../utils/styles';
 
