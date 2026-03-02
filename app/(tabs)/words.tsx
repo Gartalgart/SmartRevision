@@ -15,8 +15,18 @@ export default function Words() {
     const router = useRouter();
     const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
     const [path, setPath] = useState<Folder[]>([]);
-    const { vocabulary, isLoading: wordsLoading, deleteWord } = useVocabulary(currentFolderId);
-    const { folders, isLoading: foldersLoading, createFolder, deleteFolder } = useFolders(currentFolderId);
+    const { vocabulary, isLoading: wordsLoading, deleteWord, error: wordsError } = useVocabulary(currentFolderId);
+    const { folders, isLoading: foldersLoading, createFolder, deleteFolder, error: foldersError } = useFolders(currentFolderId);
+
+    useEffect(() => {
+        if (wordsError) {
+            Alert.alert("Erreur Vocabulaire", (wordsError as any).message || "Une erreur est survenue lors du chargement des mots.");
+        }
+        if (foldersError) {
+            Alert.alert("Erreur Dossiers", (foldersError as any).message || "Une erreur est survenue lors du chargement des dossiers.");
+        }
+    }, [wordsError, foldersError]);
+
     const [search, setSearch] = useState('');
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
     const [newFolderName, setNewFolderName] = useState('');
