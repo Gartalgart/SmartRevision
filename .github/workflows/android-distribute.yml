@@ -50,5 +50,4 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_TOKEN }} # Utilisation du Token (plus fiable)
-          groups: testers
           file: android/app/build/outputs/apk/debug/app-debug.apk
