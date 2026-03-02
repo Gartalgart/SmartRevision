@@ -1,4 +1,5 @@
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api';
+// URL de production hardcodée pour éviter les problèmes de variables d'environnement lors du build natif
+const API_URL = 'https://api.smartrevision.app/api';
 
 export const apiClient = {
     async get(endpoint: string) {
