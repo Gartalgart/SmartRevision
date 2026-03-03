@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { colors } from '../../utils/styles';
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { useTheme } from '../../utils/styles';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 interface FlashCardProps {
@@ -13,6 +13,7 @@ interface FlashCardProps {
 }
 
 export const FlashCard = ({ englishWord, frenchTranslation, exampleSentence, onFlip, reset }: FlashCardProps) => {
+    const theme = useTheme();
     const spin = useSharedValue(0);
 
     useEffect(() => {
@@ -27,6 +28,8 @@ export const FlashCard = ({ englishWord, frenchTranslation, exampleSentence, onF
             transform: [{ rotateY: `${spinVal}deg` }],
             opacity: spin.value < 90 ? 1 : 0,
             zIndex: spin.value < 90 ? 1 : 0,
+            backgroundColor: withTiming(theme.card),
+            borderColor: withTiming(theme.border),
         };
     });
 
@@ -36,6 +39,8 @@ export const FlashCard = ({ englishWord, frenchTranslation, exampleSentence, onF
             transform: [{ rotateY: `${spinVal}deg` }],
             opacity: spin.value >= 90 ? 1 : 0,
             zIndex: spin.value >= 90 ? 1 : 0,
+            backgroundColor: withTiming(theme.isDark ? theme.gray100 : '#F8FAFC'),
+            borderColor: withTiming(theme.isDark ? theme.gray200 : '#E2E8F0'),
         };
     });
 
@@ -55,30 +60,30 @@ export const FlashCard = ({ englishWord, frenchTranslation, exampleSentence, onF
                 {/* Front */}
                 <Animated.View style={[styles.card, styles.frontCard, frontAnimatedStyle]}>
                     <View style={styles.topRow}>
-                        <Text style={styles.label}>ANGLAIS</Text>
+                        <Text style={[styles.label, { color: theme.primary }]}>ANGLAIS</Text>
                         <Text style={styles.emoji}>🇬🇧</Text>
                     </View>
                     <View style={styles.centerContent}>
-                        <Text style={styles.wordFront}>{englishWord}</Text>
+                        <Text style={[styles.wordFront, { color: theme.text }]}>{englishWord}</Text>
                     </View>
                     <View style={styles.bottomRow}>
-                        <FontAwesome name="hand-pointer-o" size={16} color={colors.primaryLight} />
-                        <Text style={styles.hint}>Appuyez pour retourner</Text>
+                        <FontAwesome name="hand-pointer-o" size={16} color={theme.primaryLight} />
+                        <Text style={[styles.hint, { color: theme.textSecondary }]}>Appuyez pour retourner</Text>
                     </View>
                 </Animated.View>
 
                 {/* Back */}
                 <Animated.View style={[styles.card, styles.backCard, backAnimatedStyle]}>
                      <View style={styles.topRow}>
-                        <Text style={[styles.label, {color: colors.success}]}>FRANÇAIS</Text>
+                        <Text style={[styles.label, {color: theme.success}]}>FRANÇAIS</Text>
                         <Text style={styles.emoji}>🇫🇷</Text>
                     </View>
                     <View style={styles.centerContent}>
-                        <Text style={styles.wordBack}>{frenchTranslation}</Text>
+                        <Text style={[styles.wordBack, { color: theme.text }]}>{frenchTranslation}</Text>
                         {exampleSentence ? (
-                            <View style={styles.exampleContainer}>
-                                <FontAwesome name="quote-left" size={12} color={colors.primaryLight} style={styles.quoteIcon} />
-                                <Text style={styles.exampleText}>{exampleSentence}</Text>
+                            <View style={[styles.exampleContainer, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight }]}>
+                                <FontAwesome name="quote-left" size={12} color={theme.primaryLight} style={styles.quoteIcon} />
+                                <Text style={[styles.exampleText, { color: theme.primary }]}>{exampleSentence}</Text>
                             </View>
                         ) : null}
                     </View>
@@ -105,20 +110,15 @@ const styles = StyleSheet.create({
         backfaceVisibility: 'hidden',
     },
     frontCard: {
-        backgroundColor: colors.card,
         borderWidth: 3,
-        borderColor: colors.border,
-        borderBottomWidth: 8, // Effet 3D "posé" sur la table
-        shadowColor: colors.primary,
+        borderBottomWidth: 8, // Effet 3D "posé" on table
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.15,
         shadowRadius: 20,
         elevation: 8,
     },
     backCard: {
-        backgroundColor: '#F8FAFC', // Gris très très clair
         borderWidth: 3,
-        borderColor: '#E2E8F0',
         borderBottomWidth: 8,
     },
     topRow: {
@@ -128,7 +128,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     label: {
-        color: colors.primary,
         fontSize: 14,
         fontWeight: '900',
         letterSpacing: 2,
@@ -145,14 +144,12 @@ const styles = StyleSheet.create({
         fontSize: 48,
         fontWeight: '900',
         textAlign: 'center',
-        color: colors.text,
         lineHeight: 56,
     },
     wordBack: {
         fontSize: 40,
         fontWeight: '900',
         textAlign: 'center',
-        color: colors.text,
         marginBottom: 24,
         lineHeight: 48,
     },
@@ -164,24 +161,20 @@ const styles = StyleSheet.create({
         marginTop: 'auto',
     },
     hint: {
-        color: colors.textSecondary,
         fontSize: 14,
         fontWeight: '700',
     },
     exampleContainer: {
-        backgroundColor: colors.indigo50,
         padding: 20,
         borderRadius: 20,
         width: '100%',
         borderWidth: 2,
-        borderColor: colors.primaryLight,
         alignItems: 'center',
     },
     quoteIcon: {
         marginBottom: 8,
     },
     exampleText: {
-        color: colors.primary,
         textAlign: 'center',
         fontSize: 18,
         fontWeight: '600',

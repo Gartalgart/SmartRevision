@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from '../ui/Button';
 import { Difficulty } from '../../utils/sm2';
-import { colors } from '../../utils/styles';
+import { useTheme } from '../../utils/styles';
 
 interface DifficultyButtonsProps {
     onRate: (difficulty: Difficulty) => void;
@@ -10,6 +10,8 @@ interface DifficultyButtonsProps {
 }
 
 export const DifficultyButtons = ({ onRate, disabled }: DifficultyButtonsProps) => {
+    const theme = useTheme();
+
     return (
         <View style={styles.container}>
             <View style={styles.buttonWrapper}>
@@ -19,7 +21,7 @@ export const DifficultyButtons = ({ onRate, disabled }: DifficultyButtonsProps) 
                     onPress={() => onRate('hard')}
                     disabled={disabled}
                 />
-                <Text style={styles.label}>1 jour</Text>
+                <Text style={[styles.label, { color: theme.textSecondary }]}>1 jour</Text>
             </View>
             <View style={styles.buttonWrapper}>
                 <Button
@@ -28,7 +30,7 @@ export const DifficultyButtons = ({ onRate, disabled }: DifficultyButtonsProps) 
                     onPress={() => onRate('medium')}
                     disabled={disabled}
                 />
-                <Text style={styles.label}>3 jours</Text>
+                <Text style={[styles.label, { color: theme.textSecondary }]}>3 jours</Text>
             </View>
             <View style={styles.buttonWrapper}>
                 <Button
@@ -37,7 +39,7 @@ export const DifficultyButtons = ({ onRate, disabled }: DifficultyButtonsProps) 
                     onPress={() => onRate('easy')}
                     disabled={disabled}
                 />
-                <Text style={styles.label}>7 jours</Text>
+                <Text style={[styles.label, { color: theme.textSecondary }]}>7 jours</Text>
             </View>
         </View>
     );
@@ -58,7 +60,6 @@ const styles = StyleSheet.create({
     label: {
         textAlign: 'center',
         fontSize: 12,
-        color: colors.gray400,
         marginTop: 8,
         fontWeight: '500',
     },

@@ -1,16 +1,20 @@
 import React, { useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Switch } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { useReviewSession } from '../../hooks/useReviewSession';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { colors, commonStyles } from '../../utils/styles';
+import { useTheme, commonStyles } from '../../utils/styles';
 import { useFocusEffect } from 'expo-router';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { useThemeStore } from '../../stores/themeStore';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function Profile() {
     const { signOut } = useAuth();
     const { stats, refetchReviews, isLoadingReviews } = useReviewSession();
+    const { isDark, toggleTheme } = useThemeStore();
+    const theme = useTheme();
 
     useFocusEffect(
         useCallback(() => {
@@ -23,70 +27,93 @@ export default function Profile() {
 
     const getPercent = (val: number) => total > 0 ? (val / total) * 100 : 0;
 
+    const animatedTextStyle = useAnimatedStyle(() => ({
+        color: withTiming(theme.text),
+    }));
+
+    const animatedSubTextStyle = useAnimatedStyle(() => ({
+        color: withTiming(theme.textSecondary),
+    }));
+
     return (
         <ScrollView
             style={commonStyles.container}
             contentContainerStyle={styles.scrollContent}
-            refreshControl={<RefreshControl refreshing={isLoadingReviews} onRefresh={refetchReviews} tintColor={colors.primary} />}
+            refreshControl={<RefreshControl refreshing={isLoadingReviews} onRefresh={refetchReviews} tintColor={theme.primary} />}
             showsVerticalScrollIndicator={false}
         >
             <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
-                <View style={styles.avatarContainer}>
-                    <View style={styles.avatar}>
+                <View style={[styles.avatarContainer, { shadowColor: theme.primary }]}>
+                    <View style={[styles.avatar, { backgroundColor: theme.indigo50, borderColor: theme.indigo100 }]}>
                         <Text style={styles.avatarEmoji}>🎓</Text>
                     </View>
                 </View>
-                <Text style={styles.username}>Étudiant</Text>
-                <Text style={styles.userSubtitle}>Membre depuis aujourd'hui</Text>
+                <Animated.Text style={[styles.username, animatedTextStyle]}>Étudiant</Animated.Text>
+                <Animated.Text style={[styles.userSubtitle, animatedSubTextStyle]}>Membre depuis aujourd'hui</Animated.Text>
             </Animated.View>
 
-            <Animated.Text entering={FadeInDown.delay(200).springify()} style={styles.sectionTitle}>Statistiques Globales</Animated.Text>
+            <Animated.View entering={FadeInDown.delay(150).springify()}>
+                <Card style={styles.settingsCard}>
+                    <View style={styles.settingRow}>
+                        <View style={styles.settingInfo}>
+                            <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={20} color={theme.primary} style={{ marginRight: 12 }} />
+                            <Animated.Text style={[styles.settingLabel, animatedTextStyle]}>Mode Sombre</Animated.Text>
+                        </View>
+                        <Switch
+                            value={isDark}
+                            onValueChange={toggleTheme}
+                            trackColor={{ false: theme.gray300, true: theme.primary }}
+                            thumbColor={isDark ? '#FFFFFF' : '#FFFFFF'}
+                        />
+                    </View>
+                </Card>
+            </Animated.View>
+
+            <Animated.Text entering={FadeInDown.delay(200).springify()} style={[styles.sectionTitle, { color: theme.text }]}>Statistiques Globales</Animated.Text>
 
             <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.overviewGrid}>
-                <Card style={[styles.overviewCard, { borderColor: colors.primaryLight, borderWidth: 2 }]}>
-                    <Text style={styles.overviewValue}>{total}</Text>
-                    <Text style={styles.overviewLabel}>Mots Total</Text>
+                <Card style={[styles.overviewCard, { borderColor: theme.indigo100, borderWidth: 2 }]}>
+                    <Animated.Text style={[styles.overviewValue, { color: theme.primary }]}>{total}</Animated.Text>
+                    <Animated.Text style={[styles.overviewLabel, animatedSubTextStyle]}>Mots Total</Animated.Text>
                 </Card>
-                <Card style={[styles.overviewCard, { borderColor: colors.amber100, borderWidth: 2 }]}>
-                    <Text style={[styles.overviewValue, { color: colors.warning }]}>{(stats as any)?.dueCount || 0}</Text>
-                    <Text style={styles.overviewLabel}>À Réviser</Text>
+                <Card style={[styles.overviewCard, { borderColor: theme.amber100, borderWidth: 2 }]}>
+                    <Animated.Text style={[styles.overviewValue, { color: theme.warning }]}>{(stats as any)?.dueCount || 0}</Animated.Text>
+                    <Animated.Text style={[styles.overviewLabel, animatedSubTextStyle]}>À Réviser</Animated.Text>
                 </Card>
             </Animated.View>
 
-            <Animated.Text entering={FadeInDown.delay(400).springify()} style={styles.sectionTitle}>Progression</Animated.Text>
+            <Animated.Text entering={FadeInDown.delay(400).springify()} style={[styles.sectionTitle, { color: theme.text }]}>Progression</Animated.Text>
 
             <Animated.View entering={FadeInDown.delay(500).springify()}>
                 <Card style={styles.chartCard}>
-                    {/* Visual Bar Chart */}
                     <View style={styles.chartBarContainer}>
-                        {breakdown.mastered > 0 && <View style={[styles.chartSegment, { flex: breakdown.mastered, backgroundColor: colors.success, borderTopLeftRadius: 12, borderBottomLeftRadius: 12 }]} />}
-                        {breakdown.review > 0 && <View style={[styles.chartSegment, { flex: breakdown.review, backgroundColor: colors.warning }]} />}
-                        {breakdown.learning > 0 && <View style={[styles.chartSegment, { flex: breakdown.learning, backgroundColor: colors.secondary }]} />}
-                        {breakdown.new > 0 && <View style={[styles.chartSegment, { flex: breakdown.new, backgroundColor: colors.gray300, borderTopRightRadius: 12, borderBottomRightRadius: 12 }]} />}
-                        {total === 0 && <View style={[styles.chartSegment, { flex: 1, backgroundColor: colors.gray200, borderRadius: 12 }]} />}
+                        {breakdown.mastered > 0 && <View style={[styles.chartSegment, { flex: breakdown.mastered, backgroundColor: theme.success, borderTopLeftRadius: 12, borderBottomLeftRadius: 12 }]} />}
+                        {breakdown.review > 0 && <View style={[styles.chartSegment, { flex: breakdown.review, backgroundColor: theme.warning }]} />}
+                        {breakdown.learning > 0 && <View style={[styles.chartSegment, { flex: breakdown.learning, backgroundColor: theme.secondary }]} />}
+                        {breakdown.new > 0 && <View style={[styles.chartSegment, { flex: breakdown.new, backgroundColor: theme.gray300, borderTopRightRadius: 12, borderBottomRightRadius: 12 }]} />}
+                        {total === 0 && <View style={[styles.chartSegment, { flex: 1, backgroundColor: theme.gray200, borderRadius: 12 }]} />}
                     </View>
 
-                    {/* Legend / Details */}
                     <View style={styles.legendContainer}>
                         <View style={styles.legendRow}>
-                            <View style={[styles.legendDot, { backgroundColor: colors.success }]} />
-                            <Text style={styles.legendLabel}>Maîtrisés</Text>
-                            <Text style={styles.legendValue}>{breakdown.mastered} ({getPercent(breakdown.mastered).toFixed(0)}%)</Text>
+                            <View style={[styles.legendDot, { backgroundColor: theme.success }]} />
+                            <Animated.Text style={[styles.legendLabel, animatedTextStyle]}>Maîtrisés</Animated.Text>
+                            <Animated.Text style={[styles.legendValue, animatedSubTextStyle]}>{breakdown.mastered} ({getPercent(breakdown.mastered).toFixed(0)}%)</Animated.Text>
                         </View>
                         <View style={styles.legendRow}>
-                            <View style={[styles.legendDot, { backgroundColor: colors.warning }]} />
-                            <Text style={styles.legendLabel}>En Révision</Text>
-                            <Text style={styles.legendValue}>{breakdown.review} ({getPercent(breakdown.review).toFixed(0)}%)</Text>
+                            <View style={[styles.legendDot, { backgroundColor: theme.warning }]} />
+                            <Animated.Text style={[styles.legendLabel, animatedTextStyle]}>En Révision</Animated.Text>
+                            <Animated.Text style={[styles.legendValue, animatedSubTextStyle]}>{breakdown.review} ({getPercent(breakdown.review).toFixed(0)}%)</Animated.Text>
                         </View>
                         <View style={styles.legendRow}>
-                            <View style={[styles.legendDot, { backgroundColor: colors.secondary }]} />
-                            <Text style={styles.legendLabel}>En Apprentissage</Text>
-                            <Text style={styles.legendValue}>{breakdown.learning} ({getPercent(breakdown.learning).toFixed(0)}%)</Text>
+                            <View style={[styles.legendDot, { backgroundColor: theme.secondary }]} />
+                            <Animated.Text style={[styles.legendLabel, animatedTextStyle]}>En Apprentissage</Animated.Text>
+                            <Animated.Text style={[styles.legendValue, animatedSubTextStyle]}>{breakdown.learning} ({getPercent(breakdown.learning).toFixed(0)}%)</Animated.Text>
                         </View>
                         <View style={styles.legendRow}>
-                            <View style={[styles.legendDot, { backgroundColor: colors.gray300 }]} />
-                            <Text style={styles.legendLabel}>Nouveaux</Text>
-                            <Text style={styles.legendValue}>{breakdown.new} ({getPercent(breakdown.new).toFixed(0)}%)</Text>
+                            <View style={[styles.legendDot, { backgroundColor: theme.gray300 }]} />
+                            <Animated.Text style={[styles.legendLabel, animatedTextStyle]}>Nouveaux</Animated.Text>
+                            <Animated.Text style={[styles.legendValue, animatedSubTextStyle]}>{breakdown.new} ({getPercent(breakdown.new).toFixed(0)}%)</Animated.Text>
                         </View>
                     </View>
                 </Card>
@@ -99,7 +126,7 @@ export default function Profile() {
                     onPress={signOut}
                     style={styles.logoutButton}
                 />
-                <Text style={styles.versionText}>SmartRevision v1.0.0</Text>
+                <Animated.Text style={[styles.versionText, animatedSubTextStyle]}>SmartRevision v1.0.0</Animated.Text>
             </Animated.View>
         </ScrollView>
     );
@@ -113,14 +140,12 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        marginBottom: 40,
+        marginBottom: 32,
     },
     avatarContainer: {
         padding: 4,
-        backgroundColor: colors.background,
         borderRadius: 60,
         marginBottom: 16,
-        shadowColor: colors.primary,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.15,
         shadowRadius: 16,
@@ -130,11 +155,9 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
-        backgroundColor: colors.indigo50,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 4,
-        borderColor: colors.primaryLight,
     },
     avatarEmoji: {
         fontSize: 48,
@@ -142,18 +165,33 @@ const styles = StyleSheet.create({
     username: {
         fontSize: 28,
         fontWeight: '900',
-        color: colors.text,
         marginBottom: 4,
     },
     userSubtitle: {
         fontSize: 14,
-        color: colors.textSecondary,
         fontWeight: '600',
+    },
+    settingsCard: {
+        padding: 16,
+        marginBottom: 32,
+        borderRadius: 24,
+    },
+    settingRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    settingInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    settingLabel: {
+        fontSize: 16,
+        fontWeight: '700',
     },
     sectionTitle: {
         fontSize: 22,
         fontWeight: '900',
-        color: colors.text,
         marginBottom: 20,
         marginLeft: 4,
     },
@@ -166,19 +204,16 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         paddingVertical: 24,
-        backgroundColor: colors.card,
         shadowOpacity: 0,
         elevation: 0,
     },
     overviewValue: {
         fontSize: 36,
         fontWeight: '900',
-        color: colors.primary,
         marginBottom: 8,
     },
     overviewLabel: {
         fontSize: 13,
-        color: colors.textSecondary,
         fontWeight: '800',
         textTransform: 'uppercase',
         letterSpacing: 1,
@@ -186,8 +221,6 @@ const styles = StyleSheet.create({
     chartCard: {
         padding: 24,
         marginBottom: 40,
-        borderWidth: 2,
-        borderColor: colors.border,
     },
     chartBarContainer: {
         height: 24,
@@ -216,12 +249,10 @@ const styles = StyleSheet.create({
     legendLabel: {
         flex: 1,
         fontSize: 16,
-        color: colors.text,
         fontWeight: '700',
     },
     legendValue: {
         fontSize: 16,
-        color: colors.textSecondary,
         fontWeight: '800',
     },
     actionContainer: {
@@ -234,7 +265,6 @@ const styles = StyleSheet.create({
     },
     versionText: {
         fontSize: 14,
-        color: colors.gray400,
         fontWeight: '600',
     },
 });

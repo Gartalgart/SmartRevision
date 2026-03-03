@@ -7,13 +7,14 @@ import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { colors, commonStyles } from '../../utils/styles';
+import { useTheme, commonStyles } from '../../utils/styles';
 import { ImportVocabularyAction } from '../../components/vocabulary/ImportVocabularyAction';
 import { FolderService, Folder } from '../../services/folder.service';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 export default function Words() {
     const router = useRouter();
+    const theme = useTheme();
     const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
     const [path, setPath] = useState<Folder[]>([]);
     const { vocabulary, isLoading: wordsLoading, deleteWord, error: wordsError } = useVocabulary(currentFolderId);
@@ -76,8 +77,8 @@ export default function Words() {
 
     if (wordsLoading || foldersLoading) {
         return (
-            <View style={[commonStyles.container, styles.center]}>
-                <ActivityIndicator size="large" color={colors.primary} />
+            <View style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
+                <ActivityIndicator size="large" color={theme.primary} />
             </View>
         );
     }
@@ -87,39 +88,46 @@ export default function Words() {
         ...filteredWords.map(w => ({ ...w, type: 'word' }))
     ];
 
+    const animatedTextStyle = useAnimatedStyle(() => ({
+        color: withTiming(theme.text),
+    }));
+
     return (
-        <View style={commonStyles.container}>
+        <View style={[commonStyles.container, { backgroundColor: theme.background }]}>
             <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
-                <Text style={styles.title}>Explorateur</Text>
+                <Animated.Text style={[styles.title, animatedTextStyle]}>Explorateur</Animated.Text>
                 <View style={styles.headerActions}>
                     <TouchableOpacity
                         onPress={() => router.push({ pathname: '/review', params: { folderId: currentFolderId } })}
-                        style={[styles.headerIcon, { backgroundColor: colors.indigo100 }]}
+                        style={[styles.headerIcon, { backgroundColor: theme.indigo50 }]}
                     >
-                        <FontAwesome name="play" size={20} color={colors.primary} />
+                        <FontAwesome name="play" size={20} color={theme.primary} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setIsCreatingFolder(!isCreatingFolder)} style={[styles.headerIcon, { backgroundColor: colors.emerald100 }]}>
-                        <FontAwesome name="folder-plus" size={20} color={colors.success} />
+                    <TouchableOpacity onPress={() => setIsCreatingFolder(!isCreatingFolder)} style={[styles.headerIcon, { backgroundColor: theme.emerald100 }]}>
+                        <FontAwesome name="folder-plus" size={20} color={theme.success} />
                     </TouchableOpacity>
                 </View>
             </Animated.View>
 
             {/* Fil d'Ariane / Breadcrumbs */}
             <View style={styles.breadcrumb}>
-                <TouchableOpacity onPress={() => setCurrentFolderId(null)} style={styles.breadcrumbPill}>
-                    <FontAwesome name="home" size={14} color={!currentFolderId ? colors.card : colors.primary} />
-                    <Text style={[styles.breadcrumbItem, !currentFolderId && styles.breadcrumbActive]}>Racine</Text>
+                <TouchableOpacity onPress={() => setCurrentFolderId(null)} style={[styles.breadcrumbPill, { backgroundColor: !currentFolderId ? theme.primary : theme.indigo50 }]}>
+                    <FontAwesome name="home" size={14} color={!currentFolderId ? '#FFF' : theme.primary} />
+                    <Text style={[styles.breadcrumbItem, { color: !currentFolderId ? '#FFF' : theme.primary }]}>Racine</Text>
                 </TouchableOpacity>
-                {path.map((f, i) => (
-                    <React.Fragment key={f.id}>
-                        <FontAwesome name="angle-right" size={12} color={colors.gray300} style={styles.breadcrumbSeparator} />
-                        <TouchableOpacity onPress={() => setCurrentFolderId(f.id)} style={[styles.breadcrumbPill, i === path.length - 1 && styles.breadcrumbPillActive]}>
-                            <Text style={[styles.breadcrumbItem, i === path.length - 1 && styles.breadcrumbActive]} numberOfLines={1}>
-                                {f.name}
-                            </Text>
-                        </TouchableOpacity>
-                    </React.Fragment>
-                ))}
+                {path.map((f, i) => {
+                    const isActive = i === path.length - 1;
+                    return (
+                        <React.Fragment key={f.id}>
+                            <FontAwesome name="angle-right" size={12} color={theme.gray300} style={styles.breadcrumbSeparator} />
+                            <TouchableOpacity onPress={() => setCurrentFolderId(f.id)} style={[styles.breadcrumbPill, { backgroundColor: isActive ? theme.primary : theme.indigo50 }]}>
+                                <Text style={[styles.breadcrumbItem, { color: isActive ? '#FFF' : theme.primary }]} numberOfLines={1}>
+                                    {f.name}
+                                </Text>
+                            </TouchableOpacity>
+                        </React.Fragment>
+                    );
+                })}
             </View>
 
             <View style={styles.searchContainer}>
@@ -141,11 +149,11 @@ export default function Words() {
 
             {isCreatingFolder && (
                 <Animated.View entering={FadeInDown.springify()}>
-                    <Card style={styles.createFolderCard}>
+                    <Card style={[styles.createFolderCard, { backgroundColor: theme.indigo50, borderColor: theme.indigo100 }]}>
                         <TextInput
-                            style={styles.folderInput}
+                            style={[styles.folderInput, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
                             placeholder="Nom du nouveau dossier..."
-                            placeholderTextColor={colors.gray400}
+                            placeholderTextColor={theme.gray400}
                             value={newFolderName}
                             onChangeText={setNewFolderName}
                             autoFocus
@@ -163,7 +171,7 @@ export default function Words() {
                 contentContainerStyle={styles.listContent}
                 keyExtractor={(item: any) => item.id}
                 renderItem={({ item, index }: any) => (
-                    <Card animated delay={200 + (index * 50)} style={item.type === 'folder' ? styles.folderCard : styles.wordCard}>
+                    <Card animated delay={200 + (index * 50)} style={item.type === 'folder' ? [styles.folderCard, { borderColor: theme.amber100 }] : styles.wordCard}>
                         {item.type === 'folder' ? (
                             <TouchableOpacity
                                 style={styles.itemContent}
@@ -171,26 +179,26 @@ export default function Words() {
                                 onLongPress={() => handleDeleteFolder(item.id)}
                                 activeOpacity={0.7}
                             >
-                                <View style={styles.folderIconContainer}>
-                                    <FontAwesome name="folder" size={24} color={colors.warning} />
+                                <View style={[styles.folderIconContainer, { backgroundColor: theme.amber100 }]}>
+                                    <FontAwesome name="folder" size={24} color={theme.warning} />
                                 </View>
                                 <View style={styles.info}>
-                                    <Text style={styles.folderName}>{item.name}</Text>
-                                    <Text style={styles.folderSub}>Dossier</Text>
+                                    <Text style={[styles.folderName, { color: theme.text }]}>{item.name}</Text>
+                                    <Text style={[styles.folderSub, { color: theme.textSecondary }]}>Dossier</Text>
                                 </View>
-                                <FontAwesome name="chevron-right" size={16} color={colors.gray300} />
+                                <FontAwesome name="chevron-right" size={16} color={theme.gray300} />
                             </TouchableOpacity>
                         ) : (
                             <View style={styles.itemContent}>
-                                <View style={styles.wordIconContainer}>
+                                <View style={[styles.wordIconContainer, { backgroundColor: theme.indigo50 }]}>
                                     <Text style={styles.wordEmoji}>🇬🇧</Text>
                                 </View>
                                 <View style={styles.info}>
-                                    <Text style={styles.englishWord}>{item.english_word}</Text>
-                                    <Text style={styles.frenchWord}>{item.french_translation}</Text>
+                                    <Text style={[styles.englishWord, { color: theme.text }]}>{item.english_word}</Text>
+                                    <Text style={[styles.frenchWord, { color: theme.textSecondary }]}>{item.french_translation}</Text>
                                 </View>
-                                <TouchableOpacity onPress={() => handleDeleteWord(item.id)} style={styles.deleteButton}>
-                                    <FontAwesome name="trash" size={18} color={colors.danger} />
+                                <TouchableOpacity onPress={() => handleDeleteWord(item.id)} style={[styles.deleteButton, { backgroundColor: theme.isDark ? '#451a1a' : '#FFE4E6' }]}>
+                                    <FontAwesome name="trash" size={18} color={theme.danger} />
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -198,11 +206,11 @@ export default function Words() {
                 )}
                 ListEmptyComponent={
                     <Animated.View entering={FadeInDown.delay(300)} style={styles.emptyContainer}>
-                        <View style={styles.emptyIconCircle}>
-                            <FontAwesome name="inbox" size={48} color={colors.primaryLight} />
+                        <View style={[styles.emptyIconCircle, { backgroundColor: theme.indigo50 }]}>
+                            <FontAwesome name="inbox" size={48} color={theme.primaryLight} />
                         </View>
-                        <Text style={styles.emptyTitle}>C'est bien vide ici</Text>
-                        <Text style={styles.emptyText}>Commencez par ajouter des mots ou créer un dossier.</Text>
+                        <Text style={[styles.emptyTitle, { color: theme.text }]}>C'est bien vide ici</Text>
+                        <Text style={[styles.emptyText, { color: theme.textSecondary }]}>Commencez par ajouter des mots ou créer un dossier.</Text>
                     </Animated.View>
                 }
             />
@@ -231,7 +239,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    title: { fontSize: 32, fontWeight: '900', color: colors.text },
+    title: { fontSize: 32, fontWeight: '900' },
     breadcrumb: {
         flexDirection: 'row',
         paddingHorizontal: 20,
@@ -242,17 +250,12 @@ const styles = StyleSheet.create({
     breadcrumbPill: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: colors.indigo50,
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 16,
         gap: 6,
     },
-    breadcrumbPillActive: {
-        backgroundColor: colors.primary,
-    },
-    breadcrumbItem: { color: colors.primary, fontSize: 13, fontWeight: '700' },
-    breadcrumbActive: { color: colors.card },
+    breadcrumbItem: { fontSize: 13, fontWeight: '700' },
     breadcrumbSeparator: { marginHorizontal: 8 },
     searchContainer: { paddingHorizontal: 20, marginBottom: 16 },
     actionsRow: {
@@ -267,8 +270,6 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 24,
         borderWidth: 2,
-        borderColor: colors.amber100,
-        backgroundColor: colors.card,
     },
     wordCard: { 
         marginBottom: 12, 
@@ -280,7 +281,6 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 16,
-        backgroundColor: colors.amber100,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 16,
@@ -289,7 +289,6 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 16,
-        backgroundColor: colors.indigo50,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 16,
@@ -298,26 +297,22 @@ const styles = StyleSheet.create({
         fontSize: 24,
     },
     info: { flex: 1, justifyContent: 'center' },
-    folderName: { fontSize: 18, fontWeight: '800', color: colors.text },
-    folderSub: { fontSize: 12, color: colors.textSecondary, fontWeight: '600', marginTop: 2 },
-    englishWord: { fontSize: 18, fontWeight: '800', color: colors.text },
-    frenchWord: { fontSize: 14, color: colors.textSecondary, fontWeight: '600', marginTop: 2 },
+    folderName: { fontSize: 18, fontWeight: '800' },
+    folderSub: { fontSize: 12, fontWeight: '600', marginTop: 2 },
+    englishWord: { fontSize: 18, fontWeight: '800' },
+    frenchWord: { fontSize: 14, fontWeight: '600', marginTop: 2 },
     deleteButton: {
         padding: 10,
-        backgroundColor: '#FFE4E6',
         borderRadius: 12,
     },
-    createFolderCard: { marginHorizontal: 20, marginBottom: 16, padding: 20, backgroundColor: colors.indigo50, borderWidth: 2, borderColor: colors.primaryLight },
+    createFolderCard: { marginHorizontal: 20, marginBottom: 16, padding: 20, borderWidth: 2 },
     folderInput: {
-        backgroundColor: 'white',
         padding: 16,
         borderRadius: 16,
         marginBottom: 16,
         fontSize: 16,
         fontWeight: '600',
-        color: colors.text,
         borderWidth: 1,
-        borderColor: colors.border,
     },
     createFolderButtons: { flexDirection: 'row', gap: 12 },
     emptyContainer: { alignItems: 'center', marginTop: 60 },
@@ -325,11 +320,10 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
-        backgroundColor: colors.indigo50,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
     },
-    emptyTitle: { fontSize: 20, fontWeight: '800', color: colors.text, marginBottom: 8 },
-    emptyText: { color: colors.textSecondary, textAlign: 'center', paddingHorizontal: 40, lineHeight: 20 },
+    emptyTitle: { fontSize: 20, fontWeight: '800', marginBottom: 8 },
+    emptyText: { textAlign: 'center', paddingHorizontal: 40, lineHeight: 20 },
 });

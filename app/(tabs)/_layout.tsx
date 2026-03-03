@@ -1,8 +1,8 @@
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { View, StyleSheet, Platform } from 'react-native';
-import { colors } from '../../utils/styles';
+import { Platform } from 'react-native';
+import { useTheme } from '../../utils/styles';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -15,10 +15,12 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const theme = useTheme();
+
   return (
     <Tabs screenOptions={{
-      tabBarActiveTintColor: colors.primary,
-      tabBarInactiveTintColor: colors.gray400,
+      tabBarActiveTintColor: theme.primary,
+      tabBarInactiveTintColor: theme.gray400,
       headerShown: false,
       tabBarShowLabel: true,
       tabBarLabelStyle: {
@@ -32,13 +34,13 @@ export default function TabLayout() {
         left: 20,
         right: 20,
         height: 68,
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.card,
         borderRadius: 24,
         borderTopWidth: 0,
         paddingTop: 8,
 
         // Shadow for premium look
-        shadowColor: colors.primary,
+        shadowColor: theme.primary,
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1,
         shadowRadius: 15,
@@ -95,14 +97,4 @@ export default function TabLayout() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  activeIconContainer: {
-    backgroundColor: colors.indigo50,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 16,
-    marginBottom: -4,
-  },
-});
 

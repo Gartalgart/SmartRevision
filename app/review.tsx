@@ -8,7 +8,7 @@ import { DifficultyButtons } from '../components/flashcards/DifficultyButtons';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Difficulty } from '../utils/sm2';
-import { colors, commonStyles } from '../utils/styles';
+import { useTheme, commonStyles } from '../utils/styles';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Speech from 'expo-speech';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
@@ -17,6 +17,7 @@ type ReviewMode = 'flashcard' | 'qcm-eng' | 'qcm-fra';
 
 export default function Review() {
     const router = useRouter();
+    const theme = useTheme();
     const { folderId } = useLocalSearchParams<{ folderId: string }>();
     const { dueReviews, allWords, isLoadingReviews, submitReview } = useReviewSession(folderId || null);
 
@@ -78,20 +79,20 @@ export default function Review() {
 
     if (isLoadingReviews && sessionQueue.length === 0) {
         return (
-            <View style={[commonStyles.container, styles.center]}>
-                <ActivityIndicator size="large" color={colors.primary} />
+            <View style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
+                <ActivityIndicator size="large" color={theme.primary} />
             </View>
         );
     }
 
     if (!isLoadingReviews && (!dueReviews || dueReviews.length === 0) && sessionQueue.length === 0) {
         return (
-            <Animated.View entering={FadeInDown.springify()} style={[commonStyles.container, styles.center]}>
-                <View style={styles.iconCircle}>
-                    <FontAwesome name="check" size={60} color={colors.success} />
+            <Animated.View entering={FadeInDown.springify()} style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
+                <View style={[styles.iconCircle, { backgroundColor: theme.emerald100 }]}>
+                    <FontAwesome name="check" size={60} color={theme.success} />
                 </View>
-                <Text style={styles.emptyTitle}>Tout est à jour !</Text>
-                <Text style={styles.emptySubtitle}>Vous avez révisé tous vos mots pour aujourd'hui.</Text>
+                <Text style={[styles.emptyTitle, { color: theme.text }]}>Tout est à jour !</Text>
+                <Text style={[styles.emptySubtitle, { color: theme.textSecondary }]}>Vous avez révisé tous vos mots pour aujourd'hui.</Text>
                 <View style={styles.emptyButton}>
                     <Button title="Retourner à l'accueil" onPress={() => router.back()} />
                 </View>
@@ -101,45 +102,45 @@ export default function Review() {
 
     if (!mode && !sessionComplete) {
         return (
-            <View style={[commonStyles.container, styles.modeSelection]}>
-                <Animated.Text entering={FadeInDown.delay(100).springify()} style={styles.selectionTitle}>Choisissez un mode</Animated.Text>
+            <View style={[commonStyles.container, styles.modeSelection, { backgroundColor: theme.background }]}>
+                <Animated.Text entering={FadeInDown.delay(100).springify()} style={[styles.selectionTitle, { color: theme.text }]}>Choisissez un mode</Animated.Text>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('flashcard')}>
-                    <Card animated delay={200} style={[styles.modeCard, { borderColor: colors.primaryLight, borderWidth: 2 }]}>
-                        <View style={[styles.modeIconContainer, { backgroundColor: colors.indigo50 }]}>
-                            <FontAwesome name="clone" size={32} color={colors.primary} />
+                    <Card animated delay={200} style={[styles.modeCard, { borderColor: theme.indigo100, borderWidth: 2 }]}>
+                        <View style={[styles.modeIconContainer, { backgroundColor: theme.indigo50 }]}>
+                            <FontAwesome name="clone" size={32} color={theme.primary} />
                         </View>
                         <View style={styles.modeTextContainer}>
-                            <Text style={styles.modeTitle}>Flashcards</Text>
-                            <Text style={styles.modeDesc}>Classique. Devinez et retournez la carte.</Text>
+                            <Text style={[styles.modeTitle, { color: theme.text }]}>Flashcards</Text>
+                            <Text style={[styles.modeDesc, { color: theme.textSecondary }]}>Classique. Devinez et retournez la carte.</Text>
                         </View>
-                        <FontAwesome name="chevron-right" size={16} color={colors.gray300} />
+                        <FontAwesome name="chevron-right" size={16} color={theme.gray300} />
                     </Card>
                 </TouchableOpacity>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('qcm-eng')}>
-                    <Card animated delay={300} style={[styles.modeCard, { borderColor: '#A7F3D0', borderWidth: 2 }]}>
-                        <View style={[styles.modeIconContainer, { backgroundColor: colors.emerald100 }]}>
-                            <FontAwesome name="list-ul" size={32} color={colors.success} />
+                    <Card animated delay={300} style={[styles.modeCard, { borderColor: theme.emerald100, borderWidth: 2 }]}>
+                        <View style={[styles.modeIconContainer, { backgroundColor: theme.emerald100 }]}>
+                            <FontAwesome name="list-ul" size={32} color={theme.success} />
                         </View>
                         <View style={styles.modeTextContainer}>
-                            <Text style={styles.modeTitle}>QCM (Anglais → Français)</Text>
-                            <Text style={styles.modeDesc}>Trouvez la bonne traduction parmi 4 choix.</Text>
+                            <Text style={[styles.modeTitle, { color: theme.text }]}>QCM (Anglais → Français)</Text>
+                            <Text style={[styles.modeDesc, { color: theme.textSecondary }]}>Trouvez la bonne traduction parmi 4 choix.</Text>
                         </View>
-                        <FontAwesome name="chevron-right" size={16} color={colors.gray300} />
+                        <FontAwesome name="chevron-right" size={16} color={theme.gray300} />
                     </Card>
                 </TouchableOpacity>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('qcm-fra')}>
-                    <Card animated delay={400} style={[styles.modeCard, { borderColor: '#FDE68A', borderWidth: 2 }]}>
-                        <View style={[styles.modeIconContainer, { backgroundColor: colors.amber100 }]}>
-                            <FontAwesome name="language" size={32} color={colors.warning} />
+                    <Card animated delay={400} style={[styles.modeCard, { borderColor: theme.amber100, borderWidth: 2 }]}>
+                        <View style={[styles.modeIconContainer, { backgroundColor: theme.amber100 }]}>
+                            <FontAwesome name="language" size={32} color={theme.warning} />
                         </View>
                         <View style={styles.modeTextContainer}>
-                            <Text style={styles.modeTitle}>QCM (Français → Anglais)</Text>
-                            <Text style={styles.modeDesc}>Entraînez-vous dans le sens inverse.</Text>
+                            <Text style={[styles.modeTitle, { color: theme.text }]}>QCM (Français → Anglais)</Text>
+                            <Text style={[styles.modeDesc, { color: theme.textSecondary }]}>Entraînez-vous dans le sens inverse.</Text>
                         </View>
-                        <FontAwesome name="chevron-right" size={16} color={colors.gray300} />
+                        <FontAwesome name="chevron-right" size={16} color={theme.gray300} />
                     </Card>
                 </TouchableOpacity>
 
@@ -152,15 +153,15 @@ export default function Review() {
 
     if (sessionComplete) {
         return (
-            <Animated.View entering={ZoomIn.springify()} style={[commonStyles.container, styles.center]}>
+            <Animated.View entering={ZoomIn.springify()} style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
                 <Text style={styles.celebrationEmoji}>🎉</Text>
-                <Text style={styles.completeTitle}>Session terminée !</Text>
-                <Text style={styles.completeSubtitle}>
+                <Text style={[styles.completeTitle, { color: theme.text }]}>Session terminée !</Text>
+                <Text style={[styles.completeSubtitle, { color: theme.textSecondary }]}>
                     Vous avez maîtrisé {correctCount} sur {sessionQueue.length} mots.
                 </Text>
-                <View style={styles.completeScoreBox}>
-                    <Text style={styles.scoreText}>{Math.round((correctCount / sessionQueue.length) * 100)}%</Text>
-                    <Text style={styles.scoreLabel}>de réussite</Text>
+                <View style={[styles.completeScoreBox, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight }]}>
+                    <Text style={[styles.scoreText, { color: theme.primary }]}>{Math.round((correctCount / sessionQueue.length) * 100)}%</Text>
+                    <Text style={[styles.scoreLabel, { color: theme.primary }]}>de réussite</Text>
                 </View>
                 <View style={styles.completeButton}>
                     <Button title="Super !" onPress={() => router.back()} variant="primary" />
@@ -174,16 +175,16 @@ export default function Review() {
     const progress = ((currentIndex) / sessionQueue.length) * 100;
 
     return (
-        <View style={[commonStyles.container, styles.reviewContainer]}>
+        <View style={[commonStyles.container, styles.reviewContainer, { backgroundColor: theme.background }]}>
             <View style={styles.topBar}>
                 <TouchableOpacity onPress={() => setMode(null)} style={styles.closeButton}>
-                    <FontAwesome name="close" size={24} color={colors.gray400} />
+                    <FontAwesome name="close" size={24} color={theme.gray400} />
                 </TouchableOpacity>
-                <View style={styles.progressBarContainer}>
-                    <View style={[styles.progressBar, { width: `${progress}%` }]} />
+                <View style={[styles.progressBarContainer, { backgroundColor: theme.gray200 }]}>
+                    <View style={[styles.progressBar, { width: `${progress}%`, backgroundColor: theme.success }]} />
                 </View>
                 <TouchableOpacity onPress={() => setAutoPlay(!autoPlay)} style={styles.audioButton}>
-                    <FontAwesome name={autoPlay ? "volume-up" : "volume-off"} size={24} color={autoPlay ? colors.primary : colors.gray400} />
+                    <FontAwesome name={autoPlay ? "volume-up" : "volume-off"} size={24} color={autoPlay ? theme.primary : theme.gray400} />
                 </TouchableOpacity>
             </View>
 
@@ -198,10 +199,10 @@ export default function Review() {
                             onFlip={setIsFlipped}
                         />
                          <TouchableOpacity 
-                            style={styles.speakButtonOverlay} 
+                            style={[styles.speakButtonOverlay, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight }]} 
                             onPress={() => speak(currentCard.english_word)}
                         >
-                             <FontAwesome name="volume-up" size={20} color={colors.primary} />
+                             <FontAwesome name="volume-up" size={20} color={theme.primary} />
                         </TouchableOpacity>
                     </View>
                 ) : (
@@ -220,7 +221,7 @@ export default function Review() {
                     {isFlipped ? (
                         <DifficultyButtons onRate={handleRate} />
                     ) : (
-                        <Animated.Text entering={FadeInDown} style={styles.hintText}>Appuyez sur la carte pour révéler la réponse</Animated.Text>
+                        <Animated.Text entering={FadeInDown} style={[styles.hintText, { color: theme.gray400 }]}>Appuyez sur la carte pour révéler la réponse</Animated.Text>
                     )}
                 </View>
             )}
@@ -238,7 +239,6 @@ const styles = StyleSheet.create({
         width: 120,
         height: 120,
         borderRadius: 60,
-        backgroundColor: colors.emerald100,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 24,
@@ -246,12 +246,10 @@ const styles = StyleSheet.create({
     emptyTitle: {
         fontSize: 28,
         fontWeight: '900',
-        color: colors.text,
         marginBottom: 12,
     },
     emptySubtitle: {
         fontSize: 16,
-        color: colors.textSecondary,
         textAlign: 'center',
         marginBottom: 40,
         lineHeight: 24,
@@ -272,7 +270,6 @@ const styles = StyleSheet.create({
     selectionTitle: {
         fontSize: 32,
         fontWeight: '900',
-        color: colors.text,
         marginBottom: 32,
         textAlign: 'center',
     },
@@ -297,12 +294,10 @@ const styles = StyleSheet.create({
     modeTitle: {
         fontSize: 18,
         fontWeight: '800',
-        color: colors.text,
         marginBottom: 4,
     },
     modeDesc: {
         fontSize: 14,
-        color: colors.textSecondary,
         fontWeight: '500',
         lineHeight: 20,
     },
@@ -321,14 +316,12 @@ const styles = StyleSheet.create({
     progressBarContainer: {
         flex: 1,
         height: 12,
-        backgroundColor: colors.gray200,
         borderRadius: 6,
         marginHorizontal: 16,
         overflow: 'hidden',
     },
     progressBar: {
         height: '100%',
-        backgroundColor: colors.success,
         borderRadius: 6,
     },
     cardContainer: {
@@ -342,14 +335,12 @@ const styles = StyleSheet.create({
         top: 24,
         right: 24,
         zIndex: 10,
-        backgroundColor: colors.indigo50,
         width: 48,
         height: 48,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 24,
         borderWidth: 2,
-        borderColor: colors.primaryLight,
     },
     controlsContainer: {
         height: 100,
@@ -358,7 +349,6 @@ const styles = StyleSheet.create({
     },
     hintText: {
         fontSize: 16,
-        color: colors.gray400,
         fontWeight: '700',
         marginBottom: 20,
     },
@@ -370,34 +360,28 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: '900',
         marginBottom: 12,
-        color: colors.text,
     },
     completeSubtitle: {
         fontSize: 18,
         marginBottom: 32,
-        color: colors.textSecondary,
         textAlign: 'center',
         fontWeight: '600',
     },
     completeScoreBox: {
-        backgroundColor: colors.indigo50,
         paddingVertical: 24,
         paddingHorizontal: 48,
         borderRadius: 32,
         alignItems: 'center',
         marginBottom: 40,
         borderWidth: 2,
-        borderColor: colors.primaryLight,
     },
     scoreText: {
         fontSize: 48,
         fontWeight: '900',
-        color: colors.primary,
     },
     scoreLabel: {
         fontSize: 16,
         fontWeight: '700',
-        color: colors.primary,
         opacity: 0.8,
     },
     completeButton: {

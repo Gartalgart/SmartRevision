@@ -1,7 +1,7 @@
-import React from 'react';
-import { ViewProps } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
-import { commonStyles } from '../../utils/styles';
+import React, { useMemo } from 'react';
+import { StyleSheet, ViewProps, ViewStyle } from 'react-native';
+import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { commonStyles, useTheme } from '../../utils/styles';
 
 interface CardProps extends ViewProps {
     delay?: number;
@@ -9,11 +9,22 @@ interface CardProps extends ViewProps {
 }
 
 export const Card = ({ children, style, delay = 0, animated = false, ...props }: CardProps) => {
+    const theme = useTheme();
+
+    // Flatten the style prop to check if a custom backgroundColor is provided
+    const flatStyle = useMemo(() => StyleSheet.flatten(style) as ViewStyle | undefined, [style]);
+    const hasCustomBg = !!flatStyle?.backgroundColor;
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        ...(!hasCustomBg ? { backgroundColor: withTiming(theme.card) } : {}),
+        borderColor: withTiming(theme.border),
+    }));
+
     if (animated) {
         return (
-            <Animated.View 
-                entering={FadeInDown.delay(delay).springify()} 
-                style={[commonStyles.card, style]} 
+            <Animated.View
+                entering={FadeInDown.delay(delay).springify()}
+                style={[commonStyles.card, animatedStyle, style]}
                 {...props}
             >
                 {children}
@@ -22,7 +33,7 @@ export const Card = ({ children, style, delay = 0, animated = false, ...props }:
     }
 
     return (
-        <Animated.View style={[commonStyles.card, style]} {...props}>
+        <Animated.View style={[commonStyles.card, animatedStyle, style]} {...props}>
             {children}
         </Animated.View>
     );

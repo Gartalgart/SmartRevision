@@ -1,46 +1,32 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-
-import { ExternalLink } from './ExternalLink';
-import { MonoText } from './StyledText';
-import { Text, View } from './Themed';
-
-import Colors from '../constants/Colors';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { useTheme } from '../utils/styles';
 
 export default function EditScreenInfo({ path }: { path: string }) {
+  const theme = useTheme();
+
   return (
     <View>
       <View style={styles.getStartedContainer}>
-        <Text
-          style={styles.getStartedText}
-          lightColor="rgba(0,0,0,0.8)"
-          darkColor="rgba(255,255,255,0.8)">
-          Open up the code for this screen:
+        <Text style={[styles.getStartedText, { color: theme.textSecondary }]}>
+          Ouvrez le code de cet écran :
         </Text>
 
-        <View
-          style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
-          darkColor="rgba(255,255,255,0.05)"
-          lightColor="rgba(0,0,0,0.05)">
-          <MonoText>{path}</MonoText>
+        <View style={[styles.codeHighlightContainer, { backgroundColor: theme.indigo50 }]}>
+          <Text style={[styles.homeScreenFilename, { color: theme.text }]}>{path}</Text>
         </View>
 
-        <Text
-          style={styles.getStartedText}
-          lightColor="rgba(0,0,0,0.8)"
-          darkColor="rgba(255,255,255,0.8)">
-          Change any of the text, save the file, and your app will automatically update.
+        <Text style={[styles.getStartedText, { color: theme.textSecondary }]}>
+          Modifiez le code et voyez les changements en direct.
         </Text>
       </View>
 
       <View style={styles.helpContainer}>
-        <ExternalLink
-          style={styles.helpLink}
-          href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet">
-          <Text style={styles.helpLinkText} lightColor={Colors.light.tint}>
-            Tap here if your app doesn't automatically update after making changes
+        <TouchableOpacity onPress={() => {}} style={styles.helpLink}>
+          <Text style={[styles.helpLinkText, { color: theme.primary }]}>
+            Besoin d'aide ?
           </Text>
-        </ExternalLink>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -57,6 +43,7 @@ const styles = StyleSheet.create({
   codeHighlightContainer: {
     borderRadius: 3,
     paddingHorizontal: 4,
+    marginVertical: 7,
   },
   getStartedText: {
     fontSize: 17,
@@ -72,6 +59,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   helpLinkText: {
-    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
