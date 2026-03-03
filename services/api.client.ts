@@ -1,28 +1,68 @@
-// URL de production hardcodée pour éviter les problèmes de variables d'environnement lors du build natif
+import { Alert } from 'react-native';
+
+// URL de production hardcodée
 const API_URL = 'https://api.smartrevision.app/api';
+
+const headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'User-Agent': 'SmartRevisionMobile/1.0',
+};
 
 export const apiClient = {
     async get(endpoint: string) {
-        const response = await fetch(`${API_URL}${endpoint}`);
-        if (!response.ok) throw new Error(`API GET Error: ${response.statusText}`);
-        return response.json();
+        const url = `${API_URL}${endpoint}`;
+        try {
+            const response = await fetch(url, { headers });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Status: ${response.status} - ${errorText || response.statusText}`);
+            }
+            return response.json();
+        } catch (e: any) {
+            console.error(`Fetch GET error for ${url}:`, e);
+            // On affiche l'erreur technique complète pour le debug
+            Alert.alert("Debug Connexion (GET)", `URL: ${url}\nErreur: ${e.message}`);
+            throw e;
+        }
     },
 
     async post(endpoint: string, data: any) {
-        const response = await fetch(`${API_URL}${endpoint}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) throw new Error(`API POST Error: ${response.statusText}`);
-        return response.json();
+        const url = `${API_URL}${endpoint}`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Status: ${response.status} - ${errorText || response.statusText}`);
+            }
+            return response.json();
+        } catch (e: any) {
+            console.error(`Fetch POST error for ${url}:`, e);
+            Alert.alert("Debug Connexion (POST)", `URL: ${url}\nErreur: ${e.message}`);
+            throw e;
+        }
     },
 
     async delete(endpoint: string) {
-        const response = await fetch(`${API_URL}${endpoint}`, {
-            method: 'DELETE',
-        });
-        if (!response.ok) throw new Error(`API DELETE Error: ${response.statusText}`);
-        return response.status === 204 ? null : response.json();
+        const url = `${API_URL}${endpoint}`;
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers,
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Status: ${response.status} - ${errorText || response.statusText}`);
+            }
+            return response.status === 204 ? null : response.json();
+        } catch (e: any) {
+            console.error(`Fetch DELETE error for ${url}:`, e);
+            Alert.alert("Debug Connexion (DELETE)", `URL: ${url}\nErreur: ${e.message}`);
+            throw e;
+        }
     },
 };
