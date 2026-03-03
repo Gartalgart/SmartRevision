@@ -21,8 +21,6 @@ export const apiClient = {
             return response.json();
         } catch (e: any) {
             console.error(`Fetch GET error for ${url}:`, e);
-            // On affiche l'erreur technique complète pour le debug
-            Alert.alert("Debug Connexion (GET)", `URL: ${url}\nErreur: ${e.message}`);
             throw e;
         }
     },
@@ -42,7 +40,6 @@ export const apiClient = {
             return response.json();
         } catch (e: any) {
             console.error(`Fetch POST error for ${url}:`, e);
-            Alert.alert("Debug Connexion (POST)", `URL: ${url}\nErreur: ${e.message}`);
             throw e;
         }
     },
@@ -61,7 +58,6 @@ export const apiClient = {
             return response.status === 204 ? null : response.json();
         } catch (e: any) {
             console.error(`Fetch DELETE error for ${url}:`, e);
-            Alert.alert("Debug Connexion (DELETE)", `URL: ${url}\nErreur: ${e.message}`);
             throw e;
         }
     },
