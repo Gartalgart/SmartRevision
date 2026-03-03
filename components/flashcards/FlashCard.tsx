@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { colors } from '../../utils/styles';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 interface FlashCardProps {
     englishWord: string;
@@ -40,10 +41,10 @@ export const FlashCard = ({ englishWord, frenchTranslation, exampleSentence, onF
 
     const flip = () => {
         if (spin.value < 90) {
-            spin.value = withSpring(180);
+            spin.value = withSpring(180, { damping: 12, stiffness: 100 });
             onFlip?.(true);
         } else {
-            spin.value = withSpring(0);
+            spin.value = withSpring(0, { damping: 12, stiffness: 100 });
             onFlip?.(false);
         }
     };
@@ -52,22 +53,35 @@ export const FlashCard = ({ englishWord, frenchTranslation, exampleSentence, onF
         <TouchableWithoutFeedback onPress={flip}>
             <View style={styles.container}>
                 {/* Front */}
-                <Animated.View style={[styles.card, frontAnimatedStyle]}>
-                    <Text style={styles.labelFront}>ANGLAIS</Text>
-                    <Text style={styles.wordFront}>{englishWord}</Text>
-                    <Text style={styles.hint}>Appuyez pour retourner</Text>
+                <Animated.View style={[styles.card, styles.frontCard, frontAnimatedStyle]}>
+                    <View style={styles.topRow}>
+                        <Text style={styles.label}>ANGLAIS</Text>
+                        <Text style={styles.emoji}>🇬🇧</Text>
+                    </View>
+                    <View style={styles.centerContent}>
+                        <Text style={styles.wordFront}>{englishWord}</Text>
+                    </View>
+                    <View style={styles.bottomRow}>
+                        <FontAwesome name="hand-pointer-o" size={16} color={colors.primaryLight} />
+                        <Text style={styles.hint}>Appuyez pour retourner</Text>
+                    </View>
                 </Animated.View>
 
                 {/* Back */}
-                <Animated.View style={[styles.card, backAnimatedStyle]}>
-                    <Text style={styles.labelBack}>FRANÇAIS</Text>
-                    <Text style={styles.wordBack}>{frenchTranslation}</Text>
-
-                    {exampleSentence ? (
-                        <View style={styles.exampleContainer}>
-                            <Text style={styles.exampleText}>"{exampleSentence}"</Text>
-                        </View>
-                    ) : null}
+                <Animated.View style={[styles.card, styles.backCard, backAnimatedStyle]}>
+                     <View style={styles.topRow}>
+                        <Text style={[styles.label, {color: colors.success}]}>FRANÇAIS</Text>
+                        <Text style={styles.emoji}>🇫🇷</Text>
+                    </View>
+                    <View style={styles.centerContent}>
+                        <Text style={styles.wordBack}>{frenchTranslation}</Text>
+                        {exampleSentence ? (
+                            <View style={styles.exampleContainer}>
+                                <FontAwesome name="quote-left" size={12} color={colors.primaryLight} style={styles.quoteIcon} />
+                                <Text style={styles.exampleText}>{exampleSentence}</Text>
+                            </View>
+                        ) : null}
+                    </View>
                 </Animated.View>
             </View>
         </TouchableWithoutFeedback>
@@ -79,76 +93,99 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: 450,
+        height: 500, // Légèrement plus haut
+        perspective: 1000, // Ajoute un effet 3D plus réaliste
     },
     card: {
         position: 'absolute',
         width: '100%',
         height: '100%',
-        backgroundColor: colors.card,
         borderRadius: 32,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
-        borderWidth: 1,
-        borderColor: colors.gray100,
+        padding: 24,
+        backfaceVisibility: 'hidden',
+    },
+    frontCard: {
+        backgroundColor: colors.card,
+        borderWidth: 3,
+        borderColor: colors.border,
+        borderBottomWidth: 8, // Effet 3D "posé" sur la table
+        shadowColor: colors.primary,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.15,
+        shadowRadius: 20,
+        elevation: 8,
+    },
+    backCard: {
+        backgroundColor: '#F8FAFC', // Gris très très clair
+        borderWidth: 3,
+        borderColor: '#E2E8F0',
+        borderBottomWidth: 8,
+    },
+    topRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: 32,
+        marginBottom: 20,
     },
-    labelFront: {
+    label: {
         color: colors.primary,
-        fontSize: 12,
-        fontWeight: 'bold',
-        marginBottom: 32,
+        fontSize: 14,
+        fontWeight: '900',
         letterSpacing: 2,
-        opacity: 0.6,
     },
-    labelBack: {
-        color: colors.secondary,
-        fontSize: 12,
-        fontWeight: 'bold',
-        marginBottom: 32,
-        letterSpacing: 2,
-        opacity: 0.6,
+    emoji: {
+        fontSize: 24,
+    },
+    centerContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     wordFront: {
         fontSize: 48,
-        fontWeight: '800',
+        fontWeight: '900',
         textAlign: 'center',
-        color: '#1f2937',
+        color: colors.text,
         lineHeight: 56,
     },
     wordBack: {
-        fontSize: 36,
-        fontWeight: '800',
+        fontSize: 40,
+        fontWeight: '900',
         textAlign: 'center',
-        color: '#4b5563',
-        marginBottom: 32,
-        lineHeight: 44,
+        color: colors.text,
+        marginBottom: 24,
+        lineHeight: 48,
+    },
+    bottomRow: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 8,
+        marginTop: 'auto',
     },
     hint: {
-        color: colors.gray300,
-        marginTop: 48,
+        color: colors.textSecondary,
         fontSize: 14,
-        fontWeight: '500',
+        fontWeight: '700',
     },
     exampleContainer: {
         backgroundColor: colors.indigo50,
-        padding: 24,
-        borderRadius: 16,
+        padding: 20,
+        borderRadius: 20,
         width: '100%',
-        borderWidth: 1,
-        borderColor: colors.indigo100,
+        borderWidth: 2,
+        borderColor: colors.primaryLight,
+        alignItems: 'center',
+    },
+    quoteIcon: {
+        marginBottom: 8,
     },
     exampleText: {
-        color: colors.indigo800,
+        color: colors.primary,
         textAlign: 'center',
         fontSize: 18,
-        fontWeight: '500',
+        fontWeight: '600',
         fontStyle: 'italic',
-        lineHeight: 28,
+        lineHeight: 26,
     },
 });

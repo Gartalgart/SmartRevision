@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { colors, commonStyles } from '../../utils/styles';
+import Animated, { FadeInDown, FadeInRight } from 'react-native-reanimated';
 
 const { width } = Dimensions.get('window');
 
@@ -40,15 +41,17 @@ export default function Home() {
             refreshControl={<RefreshControl refreshing={isLoadingReviews} onRefresh={refetchReviews} tintColor={colors.primary} />}
             showsVerticalScrollIndicator={false}
         >
-            <View style={styles.header}>
+            <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
                 <View>
                     <Text style={styles.dateText}>{formatDate()}</Text>
                     <Text style={styles.greeting}>Bonjour ! 👋</Text>
                 </View>
                 <TouchableOpacity style={styles.profileIcon} onPress={() => router.push('/(tabs)/profile')}>
-                    <FontAwesome name="user-circle-o" size={32} color={colors.primary} />
+                    <View style={styles.avatarPlaceholder}>
+                        <FontAwesome name="user" size={24} color={colors.primary} />
+                    </View>
                 </TouchableOpacity>
-            </View>
+            </Animated.View>
 
             {/* Main Action Card */}
             <TouchableOpacity
@@ -56,14 +59,14 @@ export default function Home() {
                 onPress={startReview}
                 disabled={dueCount === 0}
             >
-                <Card style={[styles.mainCard, dueCount === 0 && styles.disabledCard]}>
+                <Card animated delay={200} style={[styles.mainCard, dueCount === 0 && styles.disabledCard]}>
                     <View style={styles.mainCardHeader}>
                         <View style={styles.mainCardInfo}>
                             <Text style={styles.mainCardLabel}>Révision quotidienne</Text>
                             <Text style={styles.mainCardValue}>{dueCount} mots dus</Text>
                         </View>
                         <View style={styles.mainCardIcon}>
-                            <FontAwesome name="bolt" size={24} color="white" />
+                            <FontAwesome name="bolt" size={28} color={dueCount > 0 ? colors.warning : 'white'} />
                         </View>
                     </View>
 
@@ -74,63 +77,63 @@ export default function Home() {
                     <View style={styles.mainCardFooter}>
                         <Text style={styles.mainCardHint}>
                             {dueCount > 0
-                                ? "Boostez votre mémoire maintenant"
+                                ? "Boostez votre mémoire maintenant !"
                                 : "Tout est à jour ! Profitez-en pour en rajouter."}
                         </Text>
                         {dueCount > 0 && (
                             <View style={styles.startBadge}>
                                 <Text style={styles.startBadgeText}>Lancer</Text>
-                                <FontAwesome name="chevron-right" size={10} color={colors.primary} />
+                                <FontAwesome name="chevron-right" size={12} color={colors.primary} style={{marginLeft: 4}} />
                             </View>
                         )}
                     </View>
                 </Card>
             </TouchableOpacity>
 
-            <Text style={styles.sectionTitle}>Ma Progression</Text>
+            <Animated.Text entering={FadeInRight.delay(300).springify()} style={styles.sectionTitle}>Ma Progression</Animated.Text>
 
             <View style={styles.statsGrid}>
-                <Card style={[styles.statCard, { backgroundColor: '#f0fdf4' }]}>
-                    <FontAwesome name="trophy" size={20} color={colors.success} />
-                    <Text style={styles.statValue}>{learnedCount}</Text>
+                <Card animated delay={400} style={[styles.statCard, { backgroundColor: colors.emerald100, borderColor: colors.success }]}>
+                    <FontAwesome name="trophy" size={28} color={colors.success} />
+                    <Text style={[styles.statValue, { color: colors.success }]}>{learnedCount}</Text>
                     <Text style={styles.statLabel}>Maîtrisés</Text>
                 </Card>
-                <Card style={[styles.statCard, { backgroundColor: '#fff7ed' }]}>
-                    <FontAwesome name="fire" size={20} color={colors.warning} />
-                    <Text style={styles.statValue}>{streak}</Text>
+                <Card animated delay={500} style={[styles.statCard, { backgroundColor: colors.amber100, borderColor: colors.warning }]}>
+                    <FontAwesome name="fire" size={28} color={colors.warning} />
+                    <Text style={[styles.statValue, { color: colors.warning }]}>{streak}</Text>
                     <Text style={styles.statLabel}>Série</Text>
                 </Card>
-                <Card style={[styles.statCard, { backgroundColor: '#eef2ff' }]}>
-                    <FontAwesome name="book" size={20} color={colors.primary} />
-                    <Text style={styles.statValue}>{totalCount}</Text>
+                <Card animated delay={600} style={[styles.statCard, { backgroundColor: colors.indigo100, borderColor: colors.primary }]}>
+                    <FontAwesome name="book" size={28} color={colors.primary} />
+                    <Text style={[styles.statValue, { color: colors.primary }]}>{totalCount}</Text>
                     <Text style={styles.statLabel}>Total</Text>
                 </Card>
             </View>
 
-            <Text style={styles.sectionTitle}>Actions Rapides</Text>
+            <Animated.Text entering={FadeInRight.delay(700).springify()} style={styles.sectionTitle}>Actions Rapides</Animated.Text>
 
-            <View style={styles.quickActions}>
+            <Animated.View entering={FadeInDown.delay(800).springify()} style={styles.quickActions}>
                 <TouchableOpacity style={styles.actionItem} onPress={() => router.push('/(tabs)/words')}>
-                    <View style={[styles.actionIcon, { backgroundColor: colors.indigo50 }]}>
-                        <FontAwesome name="folder-open" size={20} color={colors.primary} />
+                    <View style={[styles.actionIcon, { backgroundColor: colors.indigo100, borderColor: colors.primaryLight, borderWidth: 2 }]}>
+                        <FontAwesome name="folder-open" size={24} color={colors.primary} />
                     </View>
                     <Text style={styles.actionLabel}>Explorateur</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.actionItem} onPress={() => router.push('/add-word')}>
-                    <View style={[styles.actionIcon, { backgroundColor: '#f0fdf4' }]}>
-                        <FontAwesome name="plus" size={20} color={colors.success} />
+                    <View style={[styles.actionIcon, { backgroundColor: colors.emerald100, borderColor: '#A7F3D0', borderWidth: 2 }]}>
+                        <FontAwesome name="plus" size={24} color={colors.success} />
                     </View>
                     <Text style={styles.actionLabel}>Ajouter</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.actionItem} onPress={() => router.push('/(tabs)/words')}>
-                    <View style={[styles.actionIcon, { backgroundColor: '#fff1f2' }]}>
-                        <FontAwesome name="upload" size={20} color={colors.danger} />
+                    <View style={[styles.actionIcon, { backgroundColor: '#FFE4E6', borderColor: '#FECDD3', borderWidth: 2 }]}>
+                        <FontAwesome name="upload" size={24} color={colors.danger} />
                     </View>
                     <Text style={styles.actionLabel}>Importer</Text>
                 </TouchableOpacity>
-            </View>
+            </Animated.View>
         </ScrollView>
     );
 }
@@ -139,46 +142,56 @@ const styles = StyleSheet.create({
     scrollContent: {
         paddingHorizontal: 20,
         paddingTop: 60,
-        paddingBottom: 40,
+        paddingBottom: 60,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 24,
+        marginBottom: 32,
     },
     dateText: {
         fontSize: 14,
-        color: colors.gray500,
-        fontWeight: '600',
+        color: colors.textSecondary,
+        fontWeight: '700',
         textTransform: 'uppercase',
-        letterSpacing: 0.5,
+        letterSpacing: 1,
     },
     greeting: {
-        fontSize: 32,
-        fontWeight: '800',
+        fontSize: 36,
+        fontWeight: '900',
         color: colors.text,
-        marginTop: 2,
+        marginTop: 4,
     },
     profileIcon: {
         padding: 4,
     },
+    avatarPlaceholder: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: colors.indigo100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: colors.primaryLight,
+    },
     mainCard: {
         backgroundColor: colors.primary,
-        padding: 24,
-        borderRadius: 28,
-        marginBottom: 32,
+        padding: 28,
+        borderRadius: 32,
+        marginBottom: 40,
         shadowColor: colors.primary,
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.3,
-        shadowRadius: 15,
-        elevation: 8,
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.4,
+        shadowRadius: 20,
+        elevation: 10,
         borderWidth: 0,
     },
     disabledCard: {
         backgroundColor: colors.gray300,
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
+        shadowColor: colors.gray400,
+        shadowOpacity: 0.2,
     },
     mainCardHeader: {
         flexDirection: 'row',
@@ -189,125 +202,123 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     mainCardLabel: {
-        color: 'rgba(255,255,255,0.7)',
+        color: 'rgba(255,255,255,0.8)',
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     mainCardValue: {
         color: 'white',
-        fontSize: 28,
-        fontWeight: '800',
-        marginTop: 4,
+        fontSize: 36,
+        fontWeight: '900',
+        marginTop: 8,
     },
     mainCardIcon: {
         backgroundColor: 'rgba(255,255,255,0.2)',
-        width: 48,
-        height: 48,
-        borderRadius: 16,
+        width: 60,
+        height: 60,
+        borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
     },
     progressBarContainer: {
-        height: 8,
+        height: 12,
         backgroundColor: 'rgba(255,255,255,0.2)',
-        borderRadius: 4,
-        marginTop: 24,
+        borderRadius: 6,
+        marginTop: 32,
         overflow: 'hidden',
     },
     progressBar: {
         height: '100%',
-        backgroundColor: 'white',
-        borderRadius: 4,
+        backgroundColor: colors.success,
+        borderRadius: 6,
     },
     mainCardFooter: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 24,
     },
     mainCardHint: {
         color: 'rgba(255,255,255,0.9)',
-        fontSize: 14,
-        fontWeight: '500',
+        fontSize: 15,
+        fontWeight: '600',
         flex: 1,
+        paddingRight: 16,
     },
     startBadge: {
         backgroundColor: 'white',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
         borderRadius: 20,
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 3,
     },
     startBadgeText: {
         color: colors.primary,
-        fontWeight: 'bold',
-        fontSize: 12,
+        fontWeight: '800',
+        fontSize: 14,
     },
     sectionTitle: {
-        fontSize: 20,
-        fontWeight: '800',
+        fontSize: 22,
+        fontWeight: '900',
         color: colors.text,
-        marginBottom: 16,
+        marginBottom: 20,
+        marginLeft: 4,
     },
     statsGrid: {
         flexDirection: 'row',
-        gap: 12,
-        marginBottom: 32,
+        gap: 16,
+        marginBottom: 40,
     },
     statCard: {
         flex: 1,
-        padding: 16,
-        borderRadius: 24,
-        borderWidth: 0,
+        padding: 20,
+        borderRadius: 28,
+        borderWidth: 2,
         alignItems: 'center',
+        shadowOpacity: 0,
+        elevation: 0,
     },
     statValue: {
-        fontSize: 22,
-        fontWeight: '800',
-        color: colors.text,
-        marginTop: 8,
-    },
-    statLabel: {
-        fontSize: 12,
-        color: colors.textSecondary,
-        fontWeight: '600',
-        marginTop: 2,
-        textAlign: 'center',
-    },
-    miniChart: {
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        gap: 4,
+        fontSize: 28,
+        fontWeight: '900',
         marginTop: 12,
     },
-    chartBar: {
-        width: 6,
-        backgroundColor: colors.primary,
-        borderRadius: 3,
-        opacity: 0.3,
+    statLabel: {
+        fontSize: 13,
+        color: colors.textSecondary,
+        fontWeight: '700',
+        marginTop: 4,
+        textAlign: 'center',
+        textTransform: 'uppercase',
     },
     quickActions: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 20,
+        paddingHorizontal: 8,
     },
     actionItem: {
         alignItems: 'center',
-        width: (width - 40) / 3.5,
+        width: (width - 60) / 3,
     },
     actionIcon: {
-        width: 56,
-        height: 56,
-        borderRadius: 20,
+        width: 72,
+        height: 72,
+        borderRadius: 28,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 8,
+        marginBottom: 12,
     },
     actionLabel: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: colors.text,
+        fontSize: 14,
+        fontWeight: '700',
+        color: colors.textSecondary,
     },
 });

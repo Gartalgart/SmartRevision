@@ -1,27 +1,26 @@
 import { StyleSheet } from 'react-native';
 
 export const colors = {
-    primary: '#6366f1',
-    secondary: '#8b5cf6',
-    success: '#10b981',
-    warning: '#f59e0b',
-    danger: '#ef4444',
-    background: '#f9fafb',
-    card: '#ffffff',
-    text: '#111827',
-    textSecondary: '#6b7280',
-    border: '#e5e7eb',
-    gray100: '#f3f4f6',
-    gray200: '#e5e7eb',
-    gray300: '#d1d5db',
-    gray400: '#9ca3af',
-    gray500: '#6b7280',
-    indigo50: '#eef2ff',
-    indigo100: '#e0e7ff',
-    indigo700: '#4338ca',
-    indigo800: '#3730a3',
-    emerald100: '#d1fae5',
-    amber100: '#fef3c7',
+    primary: '#5E60CE', // Un violet/indigo plus profond et moderne
+    primaryLight: '#E0E7FF',
+    secondary: '#48CAE4', // Un bleu-vert très frais
+    success: '#2DC653', // Vert plus vif "façon Duolingo"
+    warning: '#FF9F1C',
+    danger: '#EF233C',
+    background: '#F8F9FA',
+    card: '#FFFFFF',
+    text: '#2B2D42', // Noir plus doux
+    textSecondary: '#8D99AE',
+    border: '#EDF2F4',
+    gray100: '#F4F5F7',
+    gray200: '#E9ECEF',
+    gray300: '#DEE2E6',
+    gray400: '#CED4DA',
+    gray500: '#ADB5BD',
+    indigo50: '#F0F4F8',
+    indigo100: '#E0E7FF',
+    emerald100: '#D8F3DC',
+    amber100: '#FFF3CD',
 };
 
 export const commonStyles = StyleSheet.create({
@@ -31,51 +30,54 @@ export const commonStyles = StyleSheet.create({
     },
     card: {
         backgroundColor: colors.card,
-        borderRadius: 24,
+        borderRadius: 28, // Plus arrondi
         padding: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-        elevation: 2,
+        shadowColor: '#8D99AE',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.12,
+        shadowRadius: 16,
+        elevation: 5,
         borderWidth: 1,
-        borderColor: colors.gray100,
+        borderColor: colors.border,
     },
     button: {
-        height: 56,
-        borderRadius: 16,
+        height: 60, // Légèrement plus grand
+        borderRadius: 20, // Plus arrondi
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 16,
+        paddingHorizontal: 24,
     },
     buttonText: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: '800', // Plus gras
+        letterSpacing: 0.5,
     },
     input: {
         backgroundColor: colors.card,
-        borderWidth: 1,
+        borderWidth: 2, // Bordure plus épaisse au repos
         borderColor: colors.gray200,
-        borderRadius: 16,
-        paddingHorizontal: 16,
-        paddingVertical: 16,
+        borderRadius: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 18,
         fontSize: 16,
         color: colors.text,
+        fontWeight: '500',
     },
     inputError: {
         borderColor: colors.danger,
     },
     label: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: colors.textSecondary,
-        marginBottom: 4,
+        fontSize: 15,
+        fontWeight: '700',
+        color: colors.text,
+        marginBottom: 8,
         marginLeft: 4,
     },
     errorText: {
-        fontSize: 12,
+        fontSize: 13,
+        fontWeight: '600',
         color: colors.danger,
-        marginTop: 4,
+        marginTop: 6,
         marginLeft: 4,
     },
 });

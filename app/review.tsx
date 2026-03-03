@@ -11,6 +11,7 @@ import { Difficulty } from '../utils/sm2';
 import { colors, commonStyles } from '../utils/styles';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Speech from 'expo-speech';
+import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 
 type ReviewMode = 'flashcard' | 'qcm-eng' | 'qcm-fra';
 
@@ -35,7 +36,6 @@ export default function Review() {
 
     const currentCard = sessionQueue[currentIndex];
 
-    // Prononcer automatiquement le mot anglais
     useEffect(() => {
         if (currentCard && autoPlay && mode !== 'qcm-fra') {
             speak(currentCard.english_word);
@@ -86,69 +86,86 @@ export default function Review() {
 
     if (!isLoadingReviews && (!dueReviews || dueReviews.length === 0) && sessionQueue.length === 0) {
         return (
-            <View style={[commonStyles.container, styles.center]}>
-                <Text style={styles.emptyTitle}>Rien à réviser !</Text>
-                <Text style={styles.emptySubtitle}>Revenez plus tard ou ajoutez de nouveaux mots.</Text>
-                <View style={styles.emptyButton}>
-                    <Button title="Retour" onPress={() => router.back()} />
+            <Animated.View entering={FadeInDown.springify()} style={[commonStyles.container, styles.center]}>
+                <View style={styles.iconCircle}>
+                    <FontAwesome name="check" size={60} color={colors.success} />
                 </View>
-            </View>
+                <Text style={styles.emptyTitle}>Tout est à jour !</Text>
+                <Text style={styles.emptySubtitle}>Vous avez révisé tous vos mots pour aujourd'hui.</Text>
+                <View style={styles.emptyButton}>
+                    <Button title="Retourner à l'accueil" onPress={() => router.back()} />
+                </View>
+            </Animated.View>
         );
     }
 
-    // Mode Selection Screen
     if (!mode && !sessionComplete) {
         return (
             <View style={[commonStyles.container, styles.modeSelection]}>
-                <Text style={styles.selectionTitle}>Comment voulez-vous réviser ?</Text>
+                <Animated.Text entering={FadeInDown.delay(100).springify()} style={styles.selectionTitle}>Choisissez un mode</Animated.Text>
 
-                <TouchableOpacity style={styles.modeCard} onPress={() => setMode('flashcard')}>
-                    <Card style={styles.modeCardInner}>
-                        <FontAwesome name="clone" size={32} color={colors.primary} />
-                        <View style={styles.modeTextContainer}>
-                            <Text style={styles.modeTitle}>Flashcards classiques</Text>
-                            <Text style={styles.modeDesc}>Retournez la carte et évaluez votre mémoire.</Text>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('flashcard')}>
+                    <Card animated delay={200} style={[styles.modeCard, { borderColor: colors.primaryLight, borderWidth: 2 }]}>
+                        <View style={[styles.modeIconContainer, { backgroundColor: colors.indigo50 }]}>
+                            <FontAwesome name="clone" size={32} color={colors.primary} />
                         </View>
+                        <View style={styles.modeTextContainer}>
+                            <Text style={styles.modeTitle}>Flashcards</Text>
+                            <Text style={styles.modeDesc}>Classique. Devinez et retournez la carte.</Text>
+                        </View>
+                        <FontAwesome name="chevron-right" size={16} color={colors.gray300} />
                     </Card>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.modeCard} onPress={() => setMode('qcm-eng')}>
-                    <Card style={styles.modeCardInner}>
-                        <FontAwesome name="list-ul" size={32} color={colors.success} />
+                <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('qcm-eng')}>
+                    <Card animated delay={300} style={[styles.modeCard, { borderColor: '#A7F3D0', borderWidth: 2 }]}>
+                        <View style={[styles.modeIconContainer, { backgroundColor: colors.emerald100 }]}>
+                            <FontAwesome name="list-ul" size={32} color={colors.success} />
+                        </View>
                         <View style={styles.modeTextContainer}>
                             <Text style={styles.modeTitle}>QCM (Anglais → Français)</Text>
-                            <Text style={styles.modeDesc}>Choisissez la bonne traduction parmi 4 options.</Text>
+                            <Text style={styles.modeDesc}>Trouvez la bonne traduction parmi 4 choix.</Text>
                         </View>
+                        <FontAwesome name="chevron-right" size={16} color={colors.gray300} />
                     </Card>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.modeCard} onPress={() => setMode('qcm-fra')}>
-                    <Card style={styles.modeCardInner}>
-                        <FontAwesome name="language" size={32} color={colors.warning} />
+                <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('qcm-fra')}>
+                    <Card animated delay={400} style={[styles.modeCard, { borderColor: '#FDE68A', borderWidth: 2 }]}>
+                        <View style={[styles.modeIconContainer, { backgroundColor: colors.amber100 }]}>
+                            <FontAwesome name="language" size={32} color={colors.warning} />
+                        </View>
                         <View style={styles.modeTextContainer}>
                             <Text style={styles.modeTitle}>QCM (Français → Anglais)</Text>
-                            <Text style={styles.modeDesc}>Traduisez les mots français vers l'anglais.</Text>
+                            <Text style={styles.modeDesc}>Entraînez-vous dans le sens inverse.</Text>
                         </View>
+                        <FontAwesome name="chevron-right" size={16} color={colors.gray300} />
                     </Card>
                 </TouchableOpacity>
 
-                <Button title="Annuler" variant="ghost" onPress={() => router.back()} style={{ marginTop: 20 }} />
+                <Animated.View entering={FadeInDown.delay(500).springify()}>
+                    <Button title="Annuler" variant="ghost" onPress={() => router.back()} style={{ marginTop: 20 }} />
+                </Animated.View>
             </View>
         );
     }
 
     if (sessionComplete) {
         return (
-            <View style={[commonStyles.container, styles.center]}>
+            <Animated.View entering={ZoomIn.springify()} style={[commonStyles.container, styles.center]}>
                 <Text style={styles.celebrationEmoji}>🎉</Text>
                 <Text style={styles.completeTitle}>Session terminée !</Text>
                 <Text style={styles.completeSubtitle}>
-                    Vous avez maîtrisé {correctCount} sur {sessionQueue.length} mots.{"\n"}Continuez comme ça !
+                    Vous avez maîtrisé {correctCount} sur {sessionQueue.length} mots.
                 </Text>
-                <View style={styles.completeButton}>
-                    <Button title="Retour à l'accueil" onPress={() => router.back()} />
+                <View style={styles.completeScoreBox}>
+                    <Text style={styles.scoreText}>{Math.round((correctCount / sessionQueue.length) * 100)}%</Text>
+                    <Text style={styles.scoreLabel}>de réussite</Text>
                 </View>
-            </View>
+                <View style={styles.completeButton}>
+                    <Button title="Super !" onPress={() => router.back()} variant="primary" />
+                </View>
+            </Animated.View>
         );
     }
 
@@ -158,29 +175,21 @@ export default function Review() {
 
     return (
         <View style={[commonStyles.container, styles.reviewContainer]}>
-            {/* Progress Bar */}
-            <View style={styles.progressBarContainer}>
-                <View style={[styles.progressBar, { width: `${progress}%` }]} />
-            </View>
-
-            <View style={styles.topInfo}>
-                <Text style={styles.progressText}>
-                    Mot {currentIndex + 1} sur {sessionQueue.length}
-                </Text>
-                <View style={styles.topActions}>
-                    <TouchableOpacity onPress={() => setAutoPlay(!autoPlay)} style={styles.iconButton}>
-                        <FontAwesome name={autoPlay ? "volume-up" : "volume-off"} size={20} color={colors.primary} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setMode(null)}>
-                        <Text style={styles.changeModeText}>Quitter</Text>
-                    </TouchableOpacity>
+            <View style={styles.topBar}>
+                <TouchableOpacity onPress={() => setMode(null)} style={styles.closeButton}>
+                    <FontAwesome name="close" size={24} color={colors.gray400} />
+                </TouchableOpacity>
+                <View style={styles.progressBarContainer}>
+                    <View style={[styles.progressBar, { width: `${progress}%` }]} />
                 </View>
+                <TouchableOpacity onPress={() => setAutoPlay(!autoPlay)} style={styles.audioButton}>
+                    <FontAwesome name={autoPlay ? "volume-up" : "volume-off"} size={24} color={autoPlay ? colors.primary : colors.gray400} />
+                </TouchableOpacity>
             </View>
 
-            {/* Card Area */}
             <View style={styles.cardContainer}>
                 {mode === 'flashcard' ? (
-                    <View>
+                    <View style={{ width: '100%', alignItems: 'center' }}>
                         <FlashCard
                             key={currentCard.id}
                             englishWord={currentCard.english_word}
@@ -192,7 +201,7 @@ export default function Review() {
                             style={styles.speakButtonOverlay} 
                             onPress={() => speak(currentCard.english_word)}
                         >
-                             <FontAwesome name="volume-up" size={24} color={colors.primary} />
+                             <FontAwesome name="volume-up" size={20} color={colors.primary} />
                         </TouchableOpacity>
                     </View>
                 ) : (
@@ -206,13 +215,12 @@ export default function Review() {
                 )}
             </View>
 
-            {/* Controls */}
             {mode === 'flashcard' && (
                 <View style={styles.controlsContainer}>
                     {isFlipped ? (
                         <DifficultyButtons onRate={handleRate} />
                     ) : (
-                        <Text style={styles.hint}>Appuyez sur la carte pour voir la réponse</Text>
+                        <Animated.Text entering={FadeInDown} style={styles.hintText}>Appuyez sur la carte pour révéler la réponse</Animated.Text>
                     )}
                 </View>
             )}
@@ -226,133 +234,171 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 32,
     },
+    iconCircle: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        backgroundColor: colors.emerald100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 24,
+    },
+    emptyTitle: {
+        fontSize: 28,
+        fontWeight: '900',
+        color: colors.text,
+        marginBottom: 12,
+    },
+    emptySubtitle: {
+        fontSize: 16,
+        color: colors.textSecondary,
+        textAlign: 'center',
+        marginBottom: 40,
+        lineHeight: 24,
+    },
+    emptyButton: {
+        width: '100%',
+    },
     reviewContainer: {
-        paddingTop: 16,
-        paddingBottom: 32,
-        paddingHorizontal: 16,
+        paddingTop: 60,
+        paddingBottom: 40,
+        paddingHorizontal: 20,
     },
     modeSelection: {
-        padding: 24,
+        padding: 20,
+        paddingTop: 60,
         justifyContent: 'center',
     },
     selectionTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 32,
+        fontWeight: '900',
         color: colors.text,
         marginBottom: 32,
         textAlign: 'center',
     },
     modeCard: {
-        marginBottom: 16,
-    },
-    modeCardInner: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 20,
-        gap: 20,
+        marginBottom: 16,
+        borderRadius: 24,
+    },
+    modeIconContainer: {
+        width: 64,
+        height: 64,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
     },
     modeTextContainer: {
         flex: 1,
     },
     modeTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: '800',
         color: colors.text,
+        marginBottom: 4,
     },
     modeDesc: {
         fontSize: 14,
         color: colors.textSecondary,
-        marginTop: 4,
+        fontWeight: '500',
+        lineHeight: 20,
     },
-    topInfo: {
+    topBar: {
         flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 24,
+        marginBottom: 40,
     },
-    topActions: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 16,
+    closeButton: {
+        padding: 8,
     },
-    iconButton: {
-        padding: 4,
-    },
-    changeModeText: {
-        color: colors.danger,
-        fontSize: 12,
-        fontWeight: 'bold',
+    audioButton: {
+        padding: 8,
     },
     progressBarContainer: {
-        width: '100%',
-        height: 8,
+        flex: 1,
+        height: 12,
         backgroundColor: colors.gray200,
-        borderRadius: 4,
-        marginBottom: 8,
-        marginTop: 8,
+        borderRadius: 6,
+        marginHorizontal: 16,
         overflow: 'hidden',
     },
     progressBar: {
         height: '100%',
-        backgroundColor: colors.primary,
-    },
-    progressText: {
-        color: colors.gray400,
-        fontWeight: '500',
+        backgroundColor: colors.success,
+        borderRadius: 6,
     },
     cardContainer: {
         flex: 1,
         justifyContent: 'center',
+        alignItems: 'center',
         marginBottom: 32,
-        position: 'relative',
     },
     speakButtonOverlay: {
         position: 'absolute',
-        top: 20,
-        right: 20,
+        top: 24,
+        right: 24,
         zIndex: 10,
-        backgroundColor: 'rgba(255,255,255,0.8)',
-        padding: 8,
-        borderRadius: 20,
+        backgroundColor: colors.indigo50,
+        width: 48,
+        height: 48,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 24,
+        borderWidth: 2,
+        borderColor: colors.primaryLight,
     },
     controlsContainer: {
-        height: 96,
+        height: 100,
         justifyContent: 'flex-end',
+        alignItems: 'center',
     },
-    hint: {
-        textAlign: 'center',
-        color: colors.textSecondary,
+    hintText: {
         fontSize: 16,
-    },
-    emptyTitle: {
-        fontSize: 20,
-        marginBottom: 16,
-        color: colors.text,
-        fontWeight: 'bold',
-    },
-    emptySubtitle: {
-        color: colors.gray500,
-        textAlign: 'center',
-        marginBottom: 32,
-    },
-    emptyButton: {
-        width: '100%',
+        color: colors.gray400,
+        fontWeight: '700',
+        marginBottom: 20,
     },
     celebrationEmoji: {
-        fontSize: 60,
+        fontSize: 80,
         marginBottom: 24,
     },
     completeTitle: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        color: colors.primary,
+        fontSize: 32,
+        fontWeight: '900',
+        marginBottom: 12,
+        color: colors.text,
     },
     completeSubtitle: {
         fontSize: 18,
         marginBottom: 32,
-        color: colors.gray500,
+        color: colors.textSecondary,
         textAlign: 'center',
+        fontWeight: '600',
+    },
+    completeScoreBox: {
+        backgroundColor: colors.indigo50,
+        paddingVertical: 24,
+        paddingHorizontal: 48,
+        borderRadius: 32,
+        alignItems: 'center',
+        marginBottom: 40,
+        borderWidth: 2,
+        borderColor: colors.primaryLight,
+    },
+    scoreText: {
+        fontSize: 48,
+        fontWeight: '900',
+        color: colors.primary,
+    },
+    scoreLabel: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: colors.primary,
+        opacity: 0.8,
     },
     completeButton: {
         width: '100%',

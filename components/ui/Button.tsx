@@ -1,5 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { Pressable, Text, ActivityIndicator, ViewStyle, TextStyle, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { colors, commonStyles } from '../../utils/styles';
 
 interface ButtonProps {
@@ -9,55 +10,90 @@ interface ButtonProps {
     loading?: boolean;
     disabled?: boolean;
     style?: ViewStyle;
+    textStyle?: TextStyle;
 }
 
-export const Button = ({ onPress, title, variant = 'primary', loading, disabled, style }: ButtonProps) => {
-    const buttonStyle: ViewStyle = {
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+export const Button = ({ onPress, title, variant = 'primary', loading, disabled, style, textStyle: customTextStyle }: ButtonProps) => {
+    const scale = useSharedValue(1);
+    const opacity = useSharedValue(1);
+
+    const handlePressIn = () => {
+        if (disabled || loading) return;
+        scale.value = withSpring(0.95, { damping: 10, stiffness: 200 });
+        opacity.value = withTiming(0.8, { duration: 100 });
+    };
+
+    const handlePressOut = () => {
+        if (disabled || loading) return;
+        scale.value = withSpring(1, { damping: 10, stiffness: 200 });
+        opacity.value = withTiming(1, { duration: 100 });
+    };
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+        opacity: disabled ? 0.5 : opacity.value,
+    }));
+
+    const baseButtonStyle: ViewStyle = {
         ...commonStyles.button,
         ...getVariantStyle(variant),
-        opacity: disabled ? 0.5 : 1,
         ...style,
     };
 
-    const textStyle: TextStyle = {
+    // Pour les boutons pleins, on ajoute une petite ombre "solide" en bas pour l'effet tactile
+    const hasSolidShadow = variant !== 'outline' && variant !== 'ghost';
+    
+    if (hasSolidShadow) {
+        baseButtonStyle.borderBottomWidth = 4;
+        baseButtonStyle.borderColor = getShadowColor(variant);
+    }
+
+    const textStyles: TextStyle = {
         ...commonStyles.buttonText,
         color: getTextColor(variant),
+        ...customTextStyle,
     };
 
     return (
-        <TouchableOpacity
-            style={buttonStyle}
+        <AnimatedPressable
+            style={[baseButtonStyle, animatedStyle]}
             onPress={onPress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
             disabled={disabled || loading}
-            activeOpacity={0.7}
         >
             {loading ? (
                 <ActivityIndicator color={getTextColor(variant)} />
             ) : (
-                <Text style={textStyle}>{title}</Text>
+                <Text style={textStyles}>{title}</Text>
             )}
-        </TouchableOpacity>
+        </AnimatedPressable>
     );
 };
 
 function getVariantStyle(variant: string): ViewStyle {
     switch (variant) {
-        case 'primary':
-            return { backgroundColor: colors.primary };
-        case 'secondary':
-            return { backgroundColor: colors.secondary };
-        case 'outline':
-            return { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.primary };
-        case 'ghost':
-            return { backgroundColor: 'transparent' };
-        case 'danger':
-            return { backgroundColor: colors.danger };
-        case 'success':
-            return { backgroundColor: colors.success };
-        case 'warning':
-            return { backgroundColor: colors.warning };
-        default:
-            return { backgroundColor: colors.primary };
+        case 'primary': return { backgroundColor: colors.primary };
+        case 'secondary': return { backgroundColor: colors.secondary };
+        case 'outline': return { backgroundColor: 'transparent', borderWidth: 2, borderColor: colors.primary };
+        case 'ghost': return { backgroundColor: 'transparent' };
+        case 'danger': return { backgroundColor: colors.danger };
+        case 'success': return { backgroundColor: colors.success };
+        case 'warning': return { backgroundColor: colors.warning };
+        default: return { backgroundColor: colors.primary };
+    }
+}
+
+function getShadowColor(variant: string): string {
+    switch (variant) {
+        case 'primary': return '#4338CA'; // Plus foncé que primary
+        case 'secondary': return '#0096C7';
+        case 'danger': return '#D90429';
+        case 'success': return '#21863A';
+        case 'warning': return '#E85D04';
+        default: return '#4338CA';
     }
 }
 
