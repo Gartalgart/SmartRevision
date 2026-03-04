@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { useThemeStore } from '../stores/themeStore';
 
 export const lightTheme = {
-    primary: '#6366F1', 
+    primary: '#6366F1',
     primaryLight: '#EEF2FF', // Alias rajouté
     secondary: '#06B6D4',
     secondaryLight: '#CFFAFE', // Alias rajouté
@@ -28,7 +28,7 @@ export const lightTheme = {
 };
 
 export const darkTheme = {
-    primary: '#818CF8', 
+    primary: '#818CF8',
     primaryLight: '#312E81', // Alias rajouté
     secondary: '#22D3EE',
     secondaryLight: '#083344', // Alias rajouté
@@ -68,10 +68,7 @@ export const commonStyles = StyleSheet.create({
     card: {
         borderRadius: 28,
         padding: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.1,
-        shadowRadius: 16,
+        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)',
         elevation: 5,
         borderWidth: 1,
     },

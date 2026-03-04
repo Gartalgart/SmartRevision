@@ -40,10 +40,7 @@ export default function TabLayout() {
         paddingTop: 8,
 
         // Shadow for premium look
-        shadowColor: theme.primary,
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 15,
+        boxShadow: '0px 10px 15px rgba(99, 102, 241, 0.1)',
         elevation: 10,
       },
     }}>

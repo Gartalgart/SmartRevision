@@ -1,8 +1,8 @@
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React, { useEffect } from 'react';
-import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useTheme } from '../../utils/styles';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 interface FlashCardProps {
     englishWord: string;
@@ -74,8 +74,8 @@ export const FlashCard = ({ englishWord, frenchTranslation, exampleSentence, onF
 
                 {/* Back */}
                 <Animated.View style={[styles.card, styles.backCard, backAnimatedStyle]}>
-                     <View style={styles.topRow}>
-                        <Text style={[styles.label, {color: theme.success}]}>FRANÇAIS</Text>
+                    <View style={styles.topRow}>
+                        <Text style={[styles.label, { color: theme.success }]}>FRANÇAIS</Text>
                         <Text style={styles.emoji}>🇫🇷</Text>
                     </View>
                     <View style={styles.centerContent}>
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '100%',
         height: 500, // Légèrement plus haut
-        perspective: 1000, // Ajoute un effet 3D plus réaliste
+        perspective: '1000px', // Ajoute un effet 3D plus réaliste
     },
     card: {
         position: 'absolute',
@@ -112,9 +112,7 @@ const styles = StyleSheet.create({
     frontCard: {
         borderWidth: 3,
         borderBottomWidth: 8, // Effet 3D "posé" on table
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.15,
-        shadowRadius: 20,
+        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.15)',
         elevation: 8,
     },
     backCard: {

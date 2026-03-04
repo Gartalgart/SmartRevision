@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, Alert, TouchableOpacity, StyleSheet, FlatList, TextInput } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
-import { useVocabulary } from '../../hooks/useVocabulary';
-import { useFolders } from '../../hooks/useFolders';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
-import { Button } from '../../components/ui/Button';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useTheme, commonStyles } from '../../utils/styles';
 import { ImportVocabularyAction } from '../../components/vocabulary/ImportVocabularyAction';
-import { FolderService, Folder } from '../../services/folder.service';
-import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { useFolders } from '../../hooks/useFolders';
+import { useVocabulary } from '../../hooks/useVocabulary';
+import { Folder, FolderService } from '../../services/folder.service';
+import { commonStyles, useTheme } from '../../utils/styles';
 
 export default function Words() {
     const router = useRouter();
@@ -28,6 +28,10 @@ export default function Words() {
             console.error("Erreur Dossiers", foldersError);
         }
     }, [wordsError, foldersError]);
+
+    const animatedTextStyle = useAnimatedStyle(() => ({
+        color: withTiming(theme.text),
+    }));
 
     const [search, setSearch] = useState('');
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
@@ -88,10 +92,6 @@ export default function Words() {
         ...filteredWords.map(w => ({ ...w, type: 'word' }))
     ];
 
-    const animatedTextStyle = useAnimatedStyle(() => ({
-        color: withTiming(theme.text),
-    }));
-
     return (
         <View style={[commonStyles.container, { backgroundColor: theme.background }]}>
             <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
@@ -104,7 +104,7 @@ export default function Words() {
                         <FontAwesome name="play" size={20} color={theme.primary} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setIsCreatingFolder(!isCreatingFolder)} style={[styles.headerIcon, { backgroundColor: theme.emerald100 }]}>
-                        <FontAwesome name="folder-plus" size={20} color={theme.success} />
+                        <FontAwesome name="plus-square" size={20} color={theme.success} />
                     </TouchableOpacity>
                 </View>
             </Animated.View>
@@ -265,14 +265,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     listContent: { paddingHorizontal: 20, paddingBottom: 100 },
-    folderCard: { 
-        marginBottom: 12, 
+    folderCard: {
+        marginBottom: 12,
         padding: 16,
         borderRadius: 24,
         borderWidth: 2,
     },
-    wordCard: { 
-        marginBottom: 12, 
+    wordCard: {
+        marginBottom: 12,
         padding: 16,
         borderRadius: 24,
     },

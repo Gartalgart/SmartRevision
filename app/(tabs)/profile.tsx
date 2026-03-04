@@ -1,14 +1,14 @@
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useFocusEffect } from 'expo-router';
 import React, { useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, Switch } from 'react-native';
-import { useAuth } from '../../hooks/useAuth';
-import { useReviewSession } from '../../hooks/useReviewSession';
+import { RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { useTheme, commonStyles } from '../../utils/styles';
-import { useFocusEffect } from 'expo-router';
-import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { useAuth } from '../../hooks/useAuth';
+import { useReviewSession } from '../../hooks/useReviewSession';
 import { useThemeStore } from '../../stores/themeStore';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { commonStyles, useTheme } from '../../utils/styles';
 
 export default function Profile() {
     const { signOut } = useAuth();
@@ -43,7 +43,7 @@ export default function Profile() {
             showsVerticalScrollIndicator={false}
         >
             <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
-                <View style={[styles.avatarContainer, { shadowColor: theme.primary }]}>
+                <View style={[styles.avatarContainer, { boxShadow: `0px 8px 16px ${theme.primary}26` }]}>
                     <View style={[styles.avatar, { backgroundColor: theme.indigo50, borderColor: theme.indigo100 }]}>
                         <Text style={styles.avatarEmoji}>🎓</Text>
                     </View>
@@ -146,9 +146,6 @@ const styles = StyleSheet.create({
         padding: 4,
         borderRadius: 60,
         marginBottom: 16,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.15,
-        shadowRadius: 16,
         elevation: 8,
     },
     avatar: {
@@ -204,7 +201,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         paddingVertical: 24,
-        shadowOpacity: 0,
+        boxShadow: 'none',
         elevation: 0,
     },
     overviewValue: {
