@@ -7,7 +7,6 @@ const API_URL = 'https://api.smartrevision.app/api';
 const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'User-Agent': 'SmartRevisionMobile/1.0',
 };
 
 export const apiClient = {
