@@ -76,7 +76,7 @@ export const commonStyles = StyleSheet.create({
                 shadowRadius: 16,
             },
             android: {
-                elevation: 5,
+                // Supprimé pour éviter les crashs natifs
             },
             web: {
                 boxShadow: '0 8px 16px rgba(0,0,0,0.1)',

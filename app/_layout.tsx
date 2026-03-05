@@ -4,11 +4,10 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import 'react-native-reanimated';
 import { useAuthStore } from '../stores/authStore';
 
 import { StatusBar } from 'expo-status-bar';
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { View } from 'react-native';
 import { useThemeStore } from '../stores/themeStore';
 import { useTheme } from '../utils/styles';
 
@@ -61,13 +60,8 @@ function RootLayoutNav() {
     initialize();
   }, []);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    flex: 1,
-    backgroundColor: withTiming(theme.background),
-  }));
-
   return (
-    <Animated.View style={animatedStyle}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack screenOptions={{
         headerShown: false,
@@ -93,6 +87,6 @@ function RootLayoutNav() {
           }}
         />
       </Stack>
-    </Animated.View>
+    </View>
   );
 }

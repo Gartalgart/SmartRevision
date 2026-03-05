@@ -47,7 +47,7 @@ export default function TabLayout() {
             shadowRadius: 15,
           },
           android: {
-            elevation: 10,
+            // Supprimé pour éviter les crashs
           },
           web: {
             boxShadow: `0 8px 15px 0 ${theme.primary}1A`,

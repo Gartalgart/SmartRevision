@@ -2,7 +2,6 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
@@ -28,10 +27,6 @@ export default function Words() {
             console.error("Erreur Dossiers", foldersError);
         }
     }, [wordsError, foldersError]);
-
-    const animatedTextStyle = useAnimatedStyle(() => ({
-        color: withTiming(theme.text),
-    }));
 
     const [search, setSearch] = useState('');
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
@@ -96,8 +91,8 @@ export default function Words() {
 
     return (
         <View style={[commonStyles.container, { backgroundColor: theme.background }]}>
-            <Animated.View entering={FadeInDown.delay(100).duration(400)} style={styles.header}>
-                <Animated.Text style={[styles.title, animatedTextStyle]}>Explorateur</Animated.Text>
+            <View style={styles.header}>
+                <Text style={[styles.title, { color: theme.text }]}>Explorateur</Text>
                 <View style={styles.headerActions}>
                     <TouchableOpacity
                         onPress={() => router.push({ pathname: '/review', params: { folderId: currentFolderId } })}
@@ -109,7 +104,7 @@ export default function Words() {
                         <FontAwesome name="plus-square" size={20} color={theme.success} />
                     </TouchableOpacity>
                 </View>
-            </Animated.View>
+            </View>
 
             {/* Fil d'Ariane / Breadcrumbs */}
             <View style={styles.breadcrumb}>
@@ -150,7 +145,7 @@ export default function Words() {
             </View>
 
             {isCreatingFolder && (
-                <Animated.View entering={FadeInDown.duration(400)}>
+                <View>
                     <Card style={[styles.createFolderCard, { backgroundColor: theme.indigo50, borderColor: theme.indigo100 }]}>
                         <TextInput
                             style={[styles.folderInput, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
@@ -165,15 +160,15 @@ export default function Words() {
                             <Button title="Créer" onPress={handleCreateFolder} style={{ flex: 1 }} variant="success" />
                         </View>
                     </Card>
-                </Animated.View>
+                </View>
             )}
 
             <FlatList
                 data={data}
                 contentContainerStyle={styles.listContent}
                 keyExtractor={(item: any) => item.flatKey}
-                renderItem={({ item, index }: any) => (
-                    <Card animated delay={200 + (index * 50)} style={item.type === 'folder' ? [styles.folderCard, { borderColor: theme.amber100 }] : styles.wordCard}>
+                renderItem={({ item }: any) => (
+                    <Card style={item.type === 'folder' ? [styles.folderCard, { borderColor: theme.amber100 }] : styles.wordCard}>
                         {item.type === 'folder' ? (
                             <TouchableOpacity
                                 style={styles.itemContent}
@@ -207,13 +202,13 @@ export default function Words() {
                     </Card>
                 )}
                 ListEmptyComponent={
-                    <Animated.View entering={FadeInDown.delay(300)} style={styles.emptyContainer}>
+                    <View style={styles.emptyContainer}>
                         <View style={[styles.emptyIconCircle, { backgroundColor: theme.indigo50 }]}>
                             <FontAwesome name="inbox" size={48} color={theme.primaryLight} />
                         </View>
                         <Text style={[styles.emptyTitle, { color: theme.text }]}>C'est bien vide ici</Text>
                         <Text style={[styles.emptyText, { color: theme.textSecondary }]}>Commencez par ajouter des mots ou créer un dossier.</Text>
-                    </Animated.View>
+                    </View>
                 }
             />
         </View>

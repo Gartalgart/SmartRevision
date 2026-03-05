@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, ViewProps, ViewStyle } from 'react-native';
-import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { StyleSheet, View, ViewProps, ViewStyle } from 'react-native';
 import { commonStyles, useTheme } from '../../utils/styles';
 
 interface CardProps extends ViewProps {
@@ -15,26 +14,18 @@ export const Card = ({ children, style, delay = 0, animated = false, ...props }:
     const flatStyle = useMemo(() => StyleSheet.flatten(style) as ViewStyle | undefined, [style]);
     const hasCustomBg = !!flatStyle?.backgroundColor;
 
-    const animatedStyle = useAnimatedStyle(() => ({
-        ...(!hasCustomBg ? { backgroundColor: withTiming(theme.card) } : {}),
-        borderColor: withTiming(theme.border),
-    }));
-
-    if (animated) {
-        return (
-            <Animated.View
-                entering={FadeInDown.delay(delay).duration(400)}
-                style={[commonStyles.card, animatedStyle, style]}
-                {...props}
-            >
-                {children}
-            </Animated.View>
-        );
-    }
+    const cardStyle = [
+        commonStyles.card,
+        {
+            backgroundColor: hasCustomBg ? flatStyle?.backgroundColor : theme.card,
+            borderColor: theme.border
+        },
+        style
+    ];
 
     return (
-        <Animated.View style={[commonStyles.card, animatedStyle, style]} {...props}>
+        <View style={cardStyle} {...props}>
             {children}
-        </Animated.View>
+        </View>
     );
 };

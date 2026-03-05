@@ -1,8 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
-import { Platform, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
-import Animated, { FadeInDown, FadeInRight, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { Card } from '../../components/ui/Card';
 import { useReviewSession } from '../../hooks/useReviewSession';
 import { commonStyles, useTheme } from '../../utils/styles';
@@ -37,14 +36,6 @@ export default function Home() {
         }
     };
 
-    const animatedTextStyle = useAnimatedStyle(() => ({
-        color: withTiming(theme.text),
-    }));
-
-    const animatedSubTextStyle = useAnimatedStyle(() => ({
-        color: withTiming(theme.textSecondary),
-    }));
-
     const actionItemWidth = (width - 60) / 3;
 
     return (
@@ -54,17 +45,17 @@ export default function Home() {
             refreshControl={<RefreshControl refreshing={isLoadingReviews} onRefresh={refetchReviews} tintColor={theme.primary} />}
             showsVerticalScrollIndicator={false}
         >
-            <Animated.View entering={FadeInDown.delay(100).duration(400)} style={styles.header}>
+            <View style={styles.header}>
                 <View>
-                    <Animated.Text style={[styles.dateText, animatedSubTextStyle]}>{formatDate()}</Animated.Text>
-                    <Animated.Text style={[styles.greeting, animatedTextStyle]}>Bonjour ! 👋</Animated.Text>
+                    <Text style={[styles.dateText, { color: theme.textSecondary }]}>{formatDate()}</Text>
+                    <Text style={[styles.greeting, { color: theme.text }]}>Bonjour ! 👋</Text>
                 </View>
                 <TouchableOpacity style={styles.profileIcon} onPress={() => router.push('/(tabs)/profile')}>
                     <View style={[styles.avatarPlaceholder, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight }]}>
                         <FontAwesome name="user" size={24} color={theme.primary} />
                     </View>
                 </TouchableOpacity>
-            </Animated.View>
+            </View>
 
             {/* Main Action Card */}
             <TouchableOpacity
@@ -72,11 +63,11 @@ export default function Home() {
                 onPress={startReview}
                 disabled={dueCount === 0}
             >
-                <Card animated delay={200} style={[
+                <Card style={[
                     styles.mainCard,
                     dueCount > 0
-                        ? { backgroundColor: theme.primary, ...(Platform.OS === 'ios' ? { shadowColor: theme.primary } : {}) }
-                        : { backgroundColor: theme.gray200, ...(Platform.OS === 'ios' ? { shadowColor: theme.gray400 } : {}) },
+                        ? { backgroundColor: theme.primary }
+                        : { backgroundColor: theme.gray200 },
                 ]}>
                     <View style={styles.mainCardHeader}>
                         <View style={styles.mainCardInfo}>
@@ -108,50 +99,50 @@ export default function Home() {
                 </Card>
             </TouchableOpacity>
 
-            <Animated.Text style={[styles.sectionTitle, animatedTextStyle]} entering={FadeInRight.delay(300).duration(400)}>Ma Progression</Animated.Text>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Ma Progression</Text>
 
             <View style={styles.statsGrid}>
-                <Card animated delay={400} style={[styles.statCard, { backgroundColor: theme.emerald100, borderColor: theme.success }]}>
+                <Card style={[styles.statCard, { backgroundColor: theme.emerald100, borderColor: theme.success }]}>
                     <FontAwesome name="trophy" size={28} color={theme.success} />
                     <Text style={[styles.statValue, { color: theme.success }]}>{learnedCount}</Text>
-                    <Animated.Text style={[styles.statLabel, animatedSubTextStyle]}>Maîtrisés</Animated.Text>
+                    <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Maîtrisés</Text>
                 </Card>
-                <Card animated delay={500} style={[styles.statCard, { backgroundColor: theme.amber100, borderColor: theme.warning }]}>
+                <Card style={[styles.statCard, { backgroundColor: theme.amber100, borderColor: theme.warning }]}>
                     <FontAwesome name="fire" size={28} color={theme.warning} />
                     <Text style={[styles.statValue, { color: theme.warning }]}>{streak}</Text>
-                    <Animated.Text style={[styles.statLabel, animatedSubTextStyle]}>Série</Animated.Text>
+                    <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Série</Text>
                 </Card>
-                <Card animated delay={600} style={[styles.statCard, { backgroundColor: theme.indigo100, borderColor: theme.primary }]}>
+                <Card style={[styles.statCard, { backgroundColor: theme.indigo100, borderColor: theme.primary }]}>
                     <FontAwesome name="book" size={28} color={theme.primary} />
                     <Text style={[styles.statValue, { color: theme.primary }]}>{totalCount}</Text>
-                    <Animated.Text style={[styles.statLabel, animatedSubTextStyle]}>Total</Animated.Text>
+                    <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Total</Text>
                 </Card>
             </View>
 
-            <Animated.Text style={[styles.sectionTitle, animatedTextStyle]} entering={FadeInRight.delay(700).duration(400)}>Actions Rapides</Animated.Text>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Actions Rapides</Text>
 
-            <Animated.View entering={FadeInDown.delay(800).duration(400)} style={styles.quickActions}>
+            <View style={styles.quickActions}>
                 <TouchableOpacity style={[styles.actionItem, { width: actionItemWidth }]} onPress={() => router.push('/(tabs)/words')}>
                     <View style={[styles.actionIcon, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight, borderWidth: 2 }]}>
                         <FontAwesome name="folder-open" size={24} color={theme.primary} />
                     </View>
-                    <Animated.Text style={[styles.actionLabel, animatedSubTextStyle]}>Explorateur</Animated.Text>
+                    <Text style={[styles.actionLabel, { color: theme.textSecondary }]}>Explorateur</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={[styles.actionItem, { width: actionItemWidth }]} onPress={() => router.push('/add-word')}>
                     <View style={[styles.actionIcon, { backgroundColor: theme.emerald100, borderColor: theme.success, borderWidth: 2, opacity: 0.8 }]}>
                         <FontAwesome name="plus" size={24} color={theme.success} />
                     </View>
-                    <Animated.Text style={[styles.actionLabel, animatedSubTextStyle]}>Ajouter</Animated.Text>
+                    <Text style={[styles.actionLabel, { color: theme.textSecondary }]}>Ajouter</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={[styles.actionItem, { width: actionItemWidth }]} onPress={() => router.push('/(tabs)/words')}>
                     <View style={[styles.actionIcon, { backgroundColor: theme.isDark ? '#451a1a' : '#FFE4E6', borderColor: theme.danger, borderWidth: 2, opacity: 0.8 }]}>
                         <FontAwesome name="upload" size={24} color={theme.danger} />
                     </View>
-                    <Animated.Text style={[styles.actionLabel, animatedSubTextStyle]}>Importer</Animated.Text>
+                    <Text style={[styles.actionLabel, { color: theme.textSecondary }]}>Importer</Text>
                 </TouchableOpacity>
-            </Animated.View>
+            </View>
         </ScrollView>
     );
 }
@@ -194,16 +185,6 @@ const styles = StyleSheet.create({
         padding: 28,
         borderRadius: 32,
         marginBottom: 40,
-        ...Platform.select({
-            ios: {
-                shadowOffset: { width: 0, height: 12 },
-                shadowOpacity: 0.4,
-                shadowRadius: 20,
-            },
-            android: {
-                elevation: 10,
-            }
-        }),
         borderWidth: 0,
     },
     mainCardHeader: {
@@ -266,11 +247,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         flexDirection: 'row',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 3,
     },
     startBadgeText: {
         fontWeight: '800',
@@ -293,8 +269,6 @@ const styles = StyleSheet.create({
         borderRadius: 28,
         borderWidth: 2,
         alignItems: 'center',
-        shadowOpacity: 0,
-        elevation: 0,
     },
     statValue: {
         fontSize: 28,

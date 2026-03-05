@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { Card } from '../ui/Card';
-import { colors } from '../../utils/styles';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { VocabularyItem } from '../../services/vocabulary.service';
-import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
+import { colors } from '../../utils/styles';
 
 interface MCQReviewProps {
     item: VocabularyItem;
@@ -43,11 +41,11 @@ export const MCQReview = ({ item, allWords, direction, onAnswer }: MCQReviewProp
 
         setTimeout(() => {
             onAnswer(isCorrect);
-        }, 1200); // Un peu plus de temps pour voir la bonne réponse
+        }, 1200);
     };
 
     return (
-        <Animated.View entering={FadeInDown.springify()} style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.questionContainer}>
                 <Text style={styles.questionLabel}>Traduisez ce mot</Text>
                 <Text style={styles.questionWord}>{question}</Text>
@@ -57,10 +55,9 @@ export const MCQReview = ({ item, allWords, direction, onAnswer }: MCQReviewProp
                 {options.map((option, index) => {
                     const isSelected = selectedOption === option;
                     const isCorrect = option === correctAnswer;
-                    const showCorrect = selectedOption && isCorrect;
 
-                    let buttonStyle = styles.optionButton;
-                    let textStyle = styles.optionText;
+                    let buttonStyle: any = styles.optionButton;
+                    let textStyle: any = styles.optionText;
 
                     if (selectedOption) {
                         if (isCorrect) {
@@ -75,7 +72,7 @@ export const MCQReview = ({ item, allWords, direction, onAnswer }: MCQReviewProp
                     }
 
                     return (
-                        <Animated.View key={index} entering={ZoomIn.delay(100 * index).springify()} style={{ width: '100%' }}>
+                        <View key={index} style={{ width: '100%' }}>
                             <TouchableOpacity
                                 style={buttonStyle}
                                 onPress={() => handleSelect(option)}
@@ -84,11 +81,11 @@ export const MCQReview = ({ item, allWords, direction, onAnswer }: MCQReviewProp
                             >
                                 <Text style={textStyle}>{option}</Text>
                             </TouchableOpacity>
-                        </Animated.View>
+                        </View>
                     );
                 })}
             </View>
-        </Animated.View>
+        </View>
     );
 };
 
@@ -127,7 +124,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderWidth: 2,
         borderColor: colors.border,
-        borderBottomWidth: 6, // Effet 3D
+        borderBottomWidth: 6,
         alignItems: 'center',
         width: '100%',
     },
@@ -137,19 +134,19 @@ const styles = StyleSheet.create({
         color: colors.text,
     },
     correctButton: {
-        backgroundColor: '#D1FAE5', // emerald-100
+        backgroundColor: '#D1FAE5',
         borderColor: colors.success,
-        borderBottomColor: '#059669', // emerald-600
+        borderBottomColor: '#059669',
     },
     correctText: {
-        color: '#065F46', // emerald-800
+        color: '#065F46',
     },
     wrongButton: {
-        backgroundColor: '#FFE4E6', // rose-100
+        backgroundColor: '#FFE4E6',
         borderColor: colors.danger,
-        borderBottomColor: '#E11D48', // rose-600
+        borderBottomColor: '#E11D48',
     },
     wrongText: {
-        color: '#9F1239', // rose-800
+        color: '#9F1239',
     },
 });

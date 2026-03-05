@@ -1,8 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback } from 'react';
-import { Platform, RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
-import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { useAuth } from '../../hooks/useAuth';
@@ -27,14 +26,6 @@ export default function Profile() {
 
     const getPercent = (val: number) => total > 0 ? (val / total) * 100 : 0;
 
-    const animatedTextStyle = useAnimatedStyle(() => ({
-        color: withTiming(theme.text),
-    }));
-
-    const animatedSubTextStyle = useAnimatedStyle(() => ({
-        color: withTiming(theme.textSecondary),
-    }));
-
     return (
         <ScrollView
             style={commonStyles.container}
@@ -42,22 +33,22 @@ export default function Profile() {
             refreshControl={<RefreshControl refreshing={isLoadingReviews} onRefresh={refetchReviews} tintColor={theme.primary} />}
             showsVerticalScrollIndicator={false}
         >
-            <Animated.View entering={FadeInDown.delay(100).duration(400)} style={styles.header}>
-                <View style={[styles.avatarContainer, Platform.OS === 'ios' ? { shadowColor: theme.primary } : {}]}>
+            <View style={styles.header}>
+                <View style={styles.avatarContainer}>
                     <View style={[styles.avatar, { backgroundColor: theme.indigo50, borderColor: theme.indigo100 }]}>
                         <Text style={styles.avatarEmoji}>🎓</Text>
                     </View>
                 </View>
-                <Animated.Text style={[styles.username, animatedTextStyle]}>Étudiant</Animated.Text>
-                <Animated.Text style={[styles.userSubtitle, animatedSubTextStyle]}>Membre depuis aujourd'hui</Animated.Text>
-            </Animated.View>
+                <Text style={[styles.username, { color: theme.text }]}>Étudiant</Text>
+                <Text style={[styles.userSubtitle, { color: theme.textSecondary }]}>Membre depuis aujourd'hui</Text>
+            </View>
 
-            <Animated.View entering={FadeInDown.delay(150).duration(400)}>
+            <View>
                 <Card style={styles.settingsCard}>
                     <View style={styles.settingRow}>
                         <View style={styles.settingInfo}>
                             <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={20} color={theme.primary} style={{ marginRight: 12 }} />
-                            <Animated.Text style={[styles.settingLabel, animatedTextStyle]}>Mode Sombre</Animated.Text>
+                            <Text style={[styles.settingLabel, { color: theme.text }]}>Mode Sombre</Text>
                         </View>
                         <Switch
                             value={isDark}
@@ -67,24 +58,24 @@ export default function Profile() {
                         />
                     </View>
                 </Card>
-            </Animated.View>
+            </View>
 
-            <Animated.Text entering={FadeInDown.delay(200).duration(400)} style={[styles.sectionTitle, { color: theme.text }]}>Statistiques Globales</Animated.Text>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Statistiques Globales</Text>
 
-            <Animated.View entering={FadeInDown.delay(300).duration(400)} style={styles.overviewGrid}>
+            <View style={styles.overviewGrid}>
                 <Card style={[styles.overviewCard, { borderColor: theme.indigo100, borderWidth: 2 }]}>
-                    <Animated.Text style={[styles.overviewValue, { color: theme.primary }]}>{total}</Animated.Text>
-                    <Animated.Text style={[styles.overviewLabel, animatedSubTextStyle]}>Mots Total</Animated.Text>
+                    <Text style={[styles.overviewValue, { color: theme.primary }]}>{total}</Text>
+                    <Text style={[styles.overviewLabel, { color: theme.textSecondary }]}>Mots Total</Text>
                 </Card>
                 <Card style={[styles.overviewCard, { borderColor: theme.amber100, borderWidth: 2 }]}>
-                    <Animated.Text style={[styles.overviewValue, { color: theme.warning }]}>{(stats as any)?.dueCount || 0}</Animated.Text>
-                    <Animated.Text style={[styles.overviewLabel, animatedSubTextStyle]}>À Réviser</Animated.Text>
+                    <Text style={[styles.overviewValue, { color: theme.warning }]}>{(stats as any)?.dueCount || 0}</Text>
+                    <Text style={[styles.overviewLabel, { color: theme.textSecondary }]}>À Réviser</Text>
                 </Card>
-            </Animated.View>
+            </View>
 
-            <Animated.Text entering={FadeInDown.delay(400).duration(400)} style={[styles.sectionTitle, { color: theme.text }]}>Progression</Animated.Text>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Progression</Text>
 
-            <Animated.View entering={FadeInDown.delay(500).duration(400)}>
+            <View>
                 <Card style={styles.chartCard}>
                     <View style={styles.chartBarContainer}>
                         {breakdown.mastered > 0 && <View style={[styles.chartSegment, { flex: breakdown.mastered, backgroundColor: theme.success, borderTopLeftRadius: 12, borderBottomLeftRadius: 12 }]} />}
@@ -97,37 +88,37 @@ export default function Profile() {
                     <View style={styles.legendContainer}>
                         <View style={styles.legendRow}>
                             <View style={[styles.legendDot, { backgroundColor: theme.success }]} />
-                            <Animated.Text style={[styles.legendLabel, animatedTextStyle]}>Maîtrisés</Animated.Text>
-                            <Animated.Text style={[styles.legendValue, animatedSubTextStyle]}>{breakdown.mastered} ({getPercent(breakdown.mastered).toFixed(0)}%)</Animated.Text>
+                            <Text style={[styles.legendLabel, { color: theme.text }]}>Maîtrisés</Text>
+                            <Text style={[styles.legendValue, { color: theme.textSecondary }]}>{breakdown.mastered} ({getPercent(breakdown.mastered).toFixed(0)}%)</Text>
                         </View>
                         <View style={styles.legendRow}>
                             <View style={[styles.legendDot, { backgroundColor: theme.warning }]} />
-                            <Animated.Text style={[styles.legendLabel, animatedTextStyle]}>En Révision</Animated.Text>
-                            <Animated.Text style={[styles.legendValue, animatedSubTextStyle]}>{breakdown.review} ({getPercent(breakdown.review).toFixed(0)}%)</Animated.Text>
+                            <Text style={[styles.legendLabel, { color: theme.text }]}>En Révision</Text>
+                            <Text style={[styles.legendValue, { color: theme.textSecondary }]}>{breakdown.review} ({getPercent(breakdown.review).toFixed(0)}%)</Text>
                         </View>
                         <View style={styles.legendRow}>
                             <View style={[styles.legendDot, { backgroundColor: theme.secondary }]} />
-                            <Animated.Text style={[styles.legendLabel, animatedTextStyle]}>En Apprentissage</Animated.Text>
-                            <Animated.Text style={[styles.legendValue, animatedSubTextStyle]}>{breakdown.learning} ({getPercent(breakdown.learning).toFixed(0)}%)</Animated.Text>
+                            <Text style={[styles.legendLabel, { color: theme.text }]}>En Apprentissage</Text>
+                            <Text style={[styles.legendValue, { color: theme.textSecondary }]}>{breakdown.learning} ({getPercent(breakdown.learning).toFixed(0)}%)</Text>
                         </View>
                         <View style={styles.legendRow}>
                             <View style={[styles.legendDot, { backgroundColor: theme.gray300 }]} />
-                            <Animated.Text style={[styles.legendLabel, animatedTextStyle]}>Nouveaux</Animated.Text>
-                            <Animated.Text style={[styles.legendValue, animatedSubTextStyle]}>{breakdown.new} ({getPercent(breakdown.new).toFixed(0)}%)</Animated.Text>
+                            <Text style={[styles.legendLabel, { color: theme.text }]}>Nouveaux</Text>
+                            <Text style={[styles.legendValue, { color: theme.textSecondary }]}>{breakdown.new} ({getPercent(breakdown.new).toFixed(0)}%)</Text>
                         </View>
                     </View>
                 </Card>
-            </Animated.View>
+            </View>
 
-            <Animated.View entering={FadeInDown.delay(600).duration(400)} style={styles.actionContainer}>
+            <View style={styles.actionContainer}>
                 <Button
                     title="Déconnexion"
                     variant="danger"
                     onPress={signOut}
                     style={styles.logoutButton}
                 />
-                <Animated.Text style={[styles.versionText, animatedSubTextStyle]}>SmartRevision v1.0.0</Animated.Text>
-            </Animated.View>
+                <Text style={[styles.versionText, { color: theme.textSecondary }]}>SmartRevision v1.0.0</Text>
+            </View>
         </ScrollView>
     );
 }
@@ -146,16 +137,6 @@ const styles = StyleSheet.create({
         padding: 4,
         borderRadius: 60,
         marginBottom: 16,
-        ...Platform.select({
-            ios: {
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.15,
-                shadowRadius: 16,
-            },
-            android: {
-                elevation: 8,
-            }
-        }),
     },
     avatar: {
         width: 100,
@@ -210,8 +191,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         paddingVertical: 24,
-        shadowOpacity: 0,
-        elevation: 0,
     },
     overviewValue: {
         fontSize: 36,

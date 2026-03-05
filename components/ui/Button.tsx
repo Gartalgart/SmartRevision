@@ -1,6 +1,5 @@
 import React from 'react';
-import { Pressable, Text, ActivityIndicator, ViewStyle, TextStyle, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { ActivityIndicator, Pressable, Text, TextStyle, ViewStyle } from 'react-native';
 import { commonStyles, useTheme } from '../../utils/styles';
 
 interface ButtonProps {
@@ -13,46 +12,19 @@ interface ButtonProps {
     textStyle?: TextStyle;
 }
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 export const Button = ({ onPress, title, variant = 'primary', loading, disabled, style, textStyle: customTextStyle }: ButtonProps) => {
     const theme = useTheme();
-    const scale = useSharedValue(1);
-    const pressOpacity = useSharedValue(1);
 
-    const handlePressIn = () => {
-        if (disabled || loading) return;
-        scale.value = withSpring(0.95, { damping: 10, stiffness: 200 });
-        pressOpacity.value = withTiming(0.8, { duration: 100 });
-    };
-
-    const handlePressOut = () => {
-        if (disabled || loading) return;
-        scale.value = withSpring(1, { damping: 10, stiffness: 200 });
-        pressOpacity.value = withTiming(1, { duration: 100 });
-    };
-
-    const animatedStyle = useAnimatedStyle(() => {
-        const vStyle = getVariantStyle(variant, theme);
-        const sColor = getShadowColor(variant, theme);
-        return {
-            transform: [{ scale: scale.value }],
-            opacity: disabled ? 0.5 : pressOpacity.value,
-            backgroundColor: withTiming(vStyle.backgroundColor as string),
-            borderColor: withTiming((vStyle.borderColor as string) || 'transparent'),
-            borderBottomColor: withTiming(sColor),
-        };
-    });
-
-    const animatedTextStyle = useAnimatedStyle(() => {
-        const tColor = getTextColor(variant, theme);
-        return {
-            color: withTiming(tColor),
-        };
-    });
+    const vStyle = getVariantStyle(variant, theme);
+    const sColor = getShadowColor(variant, theme);
+    const tColor = getTextColor(variant, theme);
 
     const baseButtonStyle: ViewStyle = {
         ...commonStyles.button,
+        backgroundColor: vStyle.backgroundColor,
+        borderColor: vStyle.borderColor || 'transparent',
+        borderBottomColor: sColor,
+        opacity: disabled ? 0.5 : 1,
         ...style,
     };
 
@@ -63,23 +35,25 @@ export const Button = ({ onPress, title, variant = 'primary', loading, disabled,
 
     const textStyles: TextStyle = {
         ...commonStyles.buttonText,
+        color: tColor,
         ...customTextStyle,
     };
 
     return (
-        <AnimatedPressable
-            style={[baseButtonStyle, animatedStyle]}
+        <Pressable
+            style={({ pressed }) => [
+                baseButtonStyle,
+                pressed && !disabled && { opacity: 0.8, transform: [{ scale: 0.98 }] }
+            ]}
             onPress={onPress}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
             disabled={disabled || loading}
         >
             {loading ? (
-                <ActivityIndicator color={getTextColor(variant, theme)} />
+                <ActivityIndicator color={tColor} />
             ) : (
-                <Animated.Text style={[textStyles, animatedTextStyle]}>{title}</Animated.Text>
+                <Text style={textStyles}>{title}</Text>
             )}
-        </AnimatedPressable>
+        </Pressable>
     );
 };
 
@@ -97,7 +71,6 @@ function getVariantStyle(variant: string, theme: any): ViewStyle {
 }
 
 function getShadowColor(variant: string, theme: any): string {
-    // On simule une ombre plus foncée en fonction de la couleur
     switch (variant) {
         case 'primary': return theme.isDark ? '#312E81' : '#4338CA';
         case 'secondary': return '#0096C7';

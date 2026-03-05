@@ -3,7 +3,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { DifficultyButtons } from '../components/flashcards/DifficultyButtons';
 import { FlashCard } from '../components/flashcards/FlashCard';
 import { MCQReview } from '../components/flashcards/MCQReview';
@@ -87,7 +86,7 @@ export default function Review() {
 
     if (!isLoadingReviews && (!dueReviews || dueReviews.length === 0) && sessionQueue.length === 0) {
         return (
-            <Animated.View entering={FadeInDown.duration(400)} style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
+            <View style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
                 <View style={[styles.iconCircle, { backgroundColor: theme.emerald100 }]}>
                     <FontAwesome name="check" size={60} color={theme.success} />
                 </View>
@@ -96,17 +95,17 @@ export default function Review() {
                 <View style={styles.emptyButton}>
                     <Button title="Retourner à l'accueil" onPress={() => router.back()} />
                 </View>
-            </Animated.View>
+            </View>
         );
     }
 
     if (!mode && !sessionComplete) {
         return (
             <View style={[commonStyles.container, styles.modeSelection, { backgroundColor: theme.background }]}>
-                <Animated.Text entering={FadeInDown.delay(100).duration(400)} style={[styles.selectionTitle, { color: theme.text }]}>Choisissez un mode</Animated.Text>
+                <Text style={[styles.selectionTitle, { color: theme.text }]}>Choisissez un mode</Text>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('flashcard')}>
-                    <Card animated delay={200} style={[styles.modeCard, { borderColor: theme.indigo100, borderWidth: 2 }]}>
+                    <Card style={[styles.modeCard, { borderColor: theme.indigo100, borderWidth: 2 }]}>
                         <View style={[styles.modeIconContainer, { backgroundColor: theme.indigo50 }]}>
                             <FontAwesome name="clone" size={32} color={theme.primary} />
                         </View>
@@ -119,7 +118,7 @@ export default function Review() {
                 </TouchableOpacity>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('qcm-eng')}>
-                    <Card animated delay={300} style={[styles.modeCard, { borderColor: theme.emerald100, borderWidth: 2 }]}>
+                    <Card style={[styles.modeCard, { borderColor: theme.emerald100, borderWidth: 2 }]}>
                         <View style={[styles.modeIconContainer, { backgroundColor: theme.emerald100 }]}>
                             <FontAwesome name="list-ul" size={32} color={theme.success} />
                         </View>
@@ -132,7 +131,7 @@ export default function Review() {
                 </TouchableOpacity>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('qcm-fra')}>
-                    <Card animated delay={400} style={[styles.modeCard, { borderColor: theme.amber100, borderWidth: 2 }]}>
+                    <Card style={[styles.modeCard, { borderColor: theme.amber100, borderWidth: 2 }]}>
                         <View style={[styles.modeIconContainer, { backgroundColor: theme.amber100 }]}>
                             <FontAwesome name="language" size={32} color={theme.warning} />
                         </View>
@@ -144,16 +143,16 @@ export default function Review() {
                     </Card>
                 </TouchableOpacity>
 
-                <Animated.View entering={FadeInDown.delay(500).duration(400)}>
+                <View>
                     <Button title="Annuler" variant="ghost" onPress={() => router.back()} style={{ marginTop: 20 }} />
-                </Animated.View>
+                </View>
             </View>
         );
     }
 
     if (sessionComplete) {
         return (
-            <Animated.View entering={ZoomIn.duration(400)} style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
+            <View style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
                 <Text style={styles.celebrationEmoji}>🎉</Text>
                 <Text style={[styles.completeTitle, { color: theme.text }]}>Session terminée !</Text>
                 <Text style={[styles.completeSubtitle, { color: theme.textSecondary }]}>
@@ -166,7 +165,7 @@ export default function Review() {
                 <View style={styles.completeButton}>
                     <Button title="Super !" onPress={() => router.back()} variant="primary" />
                 </View>
-            </Animated.View>
+            </View>
         );
     }
 
@@ -221,7 +220,7 @@ export default function Review() {
                     {isFlipped ? (
                         <DifficultyButtons onRate={handleRate} />
                     ) : (
-                        <Animated.Text entering={FadeInDown} style={[styles.hintText, { color: theme.gray400 }]}>Appuyez sur la carte pour révéler la réponse</Animated.Text>
+                        <Text style={[styles.hintText, { color: theme.gray400 }]}>Appuyez sur la carte pour révéler la réponse</Text>
                     )}
                 </View>
             )}

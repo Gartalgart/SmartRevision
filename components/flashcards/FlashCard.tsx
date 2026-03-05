@@ -1,7 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import React, { useEffect, useState } from 'react';
+import { Platform, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { useTheme } from '../../utils/styles';
 
 interface FlashCardProps {
@@ -14,80 +13,56 @@ interface FlashCardProps {
 
 export const FlashCard = ({ englishWord, frenchTranslation, exampleSentence, onFlip, reset }: FlashCardProps) => {
     const theme = useTheme();
-    const spin = useSharedValue(0);
+    const [isFlipped, setIsFlipped] = useState(false);
 
     useEffect(() => {
         if (reset) {
-            spin.value = 0;
+            setIsFlipped(false);
         }
     }, [reset]);
 
-    const frontAnimatedStyle = useAnimatedStyle(() => {
-        const spinVal = interpolate(spin.value, [0, 180], [0, 180]);
-        return {
-            transform: [{ rotateY: `${spinVal}deg` }],
-            opacity: spin.value < 90 ? 1 : 0,
-            zIndex: spin.value < 90 ? 1 : 0,
-            backgroundColor: withTiming(theme.card),
-            borderColor: withTiming(theme.border),
-        };
-    });
-
-    const backAnimatedStyle = useAnimatedStyle(() => {
-        const spinVal = interpolate(spin.value, [0, 180], [180, 360]);
-        return {
-            transform: [{ rotateY: `${spinVal}deg` }],
-            opacity: spin.value >= 90 ? 1 : 0,
-            zIndex: spin.value >= 90 ? 1 : 0,
-            backgroundColor: withTiming(theme.isDark ? theme.gray100 : '#F8FAFC'),
-            borderColor: withTiming(theme.isDark ? theme.gray200 : '#E2E8F0'),
-        };
-    });
-
     const flip = () => {
-        if (spin.value < 90) {
-            spin.value = withSpring(180, { damping: 12, stiffness: 100 });
-            onFlip?.(true);
-        } else {
-            spin.value = withSpring(0, { damping: 12, stiffness: 100 });
-            onFlip?.(false);
-        }
+        const nextState = !isFlipped;
+        setIsFlipped(nextState);
+        onFlip?.(nextState);
     };
 
     return (
         <TouchableWithoutFeedback onPress={flip}>
             <View style={styles.container}>
-                {/* Front */}
-                <Animated.View style={[styles.card, styles.frontCard, frontAnimatedStyle]}>
-                    <View style={styles.topRow}>
-                        <Text style={[styles.label, { color: theme.primary }]}>ANGLAIS</Text>
-                        <Text style={styles.emoji}>🇬🇧</Text>
+                {!isFlipped ? (
+                    /* Front */
+                    <View style={[styles.card, styles.frontCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                        <View style={styles.topRow}>
+                            <Text style={[styles.label, { color: theme.primary }]}>ANGLAIS</Text>
+                            <Text style={styles.emoji}>🇬🇧</Text>
+                        </View>
+                        <View style={styles.centerContent}>
+                            <Text style={[styles.wordFront, { color: theme.text }]}>{englishWord}</Text>
+                        </View>
+                        <View style={styles.bottomRow}>
+                            <FontAwesome name="hand-pointer-o" size={16} color={theme.primaryLight} />
+                            <Text style={[styles.hint, { color: theme.textSecondary }]}>Appuyez pour retourner</Text>
+                        </View>
                     </View>
-                    <View style={styles.centerContent}>
-                        <Text style={[styles.wordFront, { color: theme.text }]}>{englishWord}</Text>
+                ) : (
+                    /* Back */
+                    <View style={[styles.card, styles.backCard, { backgroundColor: theme.isDark ? theme.gray100 : '#F8FAFC', borderColor: theme.isDark ? theme.gray200 : '#E2E8F0' }]}>
+                        <View style={styles.topRow}>
+                            <Text style={[styles.label, { color: theme.success }]}>FRANÇAIS</Text>
+                            <Text style={styles.emoji}>🇫🇷</Text>
+                        </View>
+                        <View style={styles.centerContent}>
+                            <Text style={[styles.wordBack, { color: theme.text }]}>{frenchTranslation}</Text>
+                            {exampleSentence ? (
+                                <View style={[styles.exampleContainer, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight }]}>
+                                    <FontAwesome name="quote-left" size={12} color={theme.primaryLight} style={styles.quoteIcon} />
+                                    <Text style={[styles.exampleText, { color: theme.primary }]}>{exampleSentence}</Text>
+                                </View>
+                            ) : null}
+                        </View>
                     </View>
-                    <View style={styles.bottomRow}>
-                        <FontAwesome name="hand-pointer-o" size={16} color={theme.primaryLight} />
-                        <Text style={[styles.hint, { color: theme.textSecondary }]}>Appuyez pour retourner</Text>
-                    </View>
-                </Animated.View>
-
-                {/* Back */}
-                <Animated.View style={[styles.card, styles.backCard, backAnimatedStyle]}>
-                    <View style={styles.topRow}>
-                        <Text style={[styles.label, { color: theme.success }]}>FRANÇAIS</Text>
-                        <Text style={styles.emoji}>🇫🇷</Text>
-                    </View>
-                    <View style={styles.centerContent}>
-                        <Text style={[styles.wordBack, { color: theme.text }]}>{frenchTranslation}</Text>
-                        {exampleSentence ? (
-                            <View style={[styles.exampleContainer, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight }]}>
-                                <FontAwesome name="quote-left" size={12} color={theme.primaryLight} style={styles.quoteIcon} />
-                                <Text style={[styles.exampleText, { color: theme.primary }]}>{exampleSentence}</Text>
-                            </View>
-                        ) : null}
-                    </View>
-                </Animated.View>
+                )}
             </View>
         </TouchableWithoutFeedback>
     );
@@ -98,8 +73,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: 500, // Légèrement plus haut
-        transform: [{ perspective: 1000 }], // Ajoute un effet 3D plus réaliste via transform
+        height: 500,
     },
     card: {
         position: 'absolute',
@@ -107,15 +81,20 @@ const styles = StyleSheet.create({
         height: '100%',
         borderRadius: 32,
         padding: 24,
-        backfaceVisibility: 'hidden',
     },
     frontCard: {
         borderWidth: 3,
-        borderBottomWidth: 8, // Effet 3D "posé" on table
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.15,
-        shadowRadius: 20,
-        elevation: 8,
+        borderBottomWidth: 8,
+        ...Platform.select({
+            ios: {
+                shadowOffset: { width: 0, height: 10 },
+                shadowOpacity: 0.15,
+                shadowRadius: 20,
+            },
+            android: {
+                // Supprimé pour éviter les crashs
+            }
+        })
     },
     backCard: {
         borderWidth: 3,
