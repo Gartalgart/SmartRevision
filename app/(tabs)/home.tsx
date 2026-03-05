@@ -75,8 +75,8 @@ export default function Home() {
                 <Card animated delay={200} style={[
                     styles.mainCard,
                     dueCount > 0
-                        ? { backgroundColor: theme.primary, boxShadow: '0px 12px 20px rgba(99, 102, 241, 0.4)' }
-                        : { backgroundColor: theme.gray200, boxShadow: '0px 12px 20px rgba(148, 163, 184, 0.4)' },
+                        ? { backgroundColor: theme.primary, shadowColor: theme.primary }
+                        : { backgroundColor: theme.gray200, shadowColor: theme.gray400 },
                 ]}>
                     <View style={styles.mainCardHeader}>
                         <View style={styles.mainCardInfo}>
@@ -194,6 +194,9 @@ const styles = StyleSheet.create({
         padding: 28,
         borderRadius: 32,
         marginBottom: 40,
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.4,
+        shadowRadius: 20,
         elevation: 10,
         borderWidth: 0,
     },
@@ -257,7 +260,10 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         flexDirection: 'row',
         alignItems: 'center',
-        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
         elevation: 3,
     },
     startBadgeText: {
@@ -281,7 +287,7 @@ const styles = StyleSheet.create({
         borderRadius: 28,
         borderWidth: 2,
         alignItems: 'center',
-        boxShadow: 'none',
+        shadowOpacity: 0,
         elevation: 0,
     },
     statValue: {

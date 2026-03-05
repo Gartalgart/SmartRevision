@@ -1,20 +1,19 @@
-import 'react-native-reanimated';
-import '../global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useFonts } from 'expo-font';
-import { Stack, useSegments, useRouter } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import 'react-native-reanimated';
 import { useAuthStore } from '../stores/authStore';
 
 import { StatusBar } from 'expo-status-bar';
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { useThemeStore } from '../stores/themeStore';
 import { useTheme } from '../utils/styles';
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 export {
-  ErrorBoundary,
+  ErrorBoundary
 } from 'expo-router';
 
 export const unstable_settings = {
@@ -70,8 +69,8 @@ function RootLayoutNav() {
   return (
     <Animated.View style={animatedStyle}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
-      <Stack screenOptions={{ 
-        headerShown: false, 
+      <Stack screenOptions={{
+        headerShown: false,
         contentStyle: { backgroundColor: 'transparent' },
         headerStyle: { backgroundColor: theme.card },
         headerTintColor: theme.text,

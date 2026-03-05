@@ -43,7 +43,7 @@ export default function Profile() {
             showsVerticalScrollIndicator={false}
         >
             <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
-                <View style={[styles.avatarContainer, { boxShadow: `0px 8px 16px ${theme.primary}26` }]}>
+                <View style={[styles.avatarContainer, { shadowColor: theme.primary }]}>
                     <View style={[styles.avatar, { backgroundColor: theme.indigo50, borderColor: theme.indigo100 }]}>
                         <Text style={styles.avatarEmoji}>🎓</Text>
                     </View>
@@ -146,6 +146,9 @@ const styles = StyleSheet.create({
         padding: 4,
         borderRadius: 60,
         marginBottom: 16,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
         elevation: 8,
     },
     avatar: {
@@ -201,7 +204,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         paddingVertical: 24,
-        boxShadow: 'none',
+        shadowOpacity: 0,
         elevation: 0,
     },
     overviewValue: {

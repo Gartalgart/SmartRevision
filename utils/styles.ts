@@ -68,7 +68,10 @@ export const commonStyles = StyleSheet.create({
     card: {
         borderRadius: 28,
         padding: 24,
-        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.1,
+        shadowRadius: 16,
         elevation: 5,
         borderWidth: 1,
     },
