@@ -1,7 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeInDown, FadeInRight, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { Card } from '../../components/ui/Card';
 import { useReviewSession } from '../../hooks/useReviewSession';
@@ -75,8 +75,8 @@ export default function Home() {
                 <Card animated delay={200} style={[
                     styles.mainCard,
                     dueCount > 0
-                        ? { backgroundColor: theme.primary, shadowColor: theme.primary }
-                        : { backgroundColor: theme.gray200, shadowColor: theme.gray400 },
+                        ? { backgroundColor: theme.primary, ...(Platform.OS === 'ios' ? { shadowColor: theme.primary } : {}) }
+                        : { backgroundColor: theme.gray200, ...(Platform.OS === 'ios' ? { shadowColor: theme.gray400 } : {}) },
                 ]}>
                     <View style={styles.mainCardHeader}>
                         <View style={styles.mainCardInfo}>

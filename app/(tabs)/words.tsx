@@ -39,7 +39,9 @@ export default function Words() {
 
     useEffect(() => {
         if (currentFolderId) {
-            FolderService.getFolderPath(currentFolderId).then(setPath);
+            FolderService.getFolderPath(currentFolderId)
+                .then(setPath)
+                .catch(e => console.error("Erreur chemin dossier:", e));
         } else {
             setPath([]);
         }
@@ -88,8 +90,8 @@ export default function Words() {
     }
 
     const data = [
-        ...filteredFolders.map(f => ({ ...f, type: 'folder' })),
-        ...filteredWords.map(w => ({ ...w, type: 'word' }))
+        ...filteredFolders.map(f => ({ ...f, type: 'folder', flatKey: `f-${f.id}` })),
+        ...filteredWords.map(w => ({ ...w, type: 'word', flatKey: `w-${w.id}` }))
     ];
 
     return (
@@ -169,7 +171,7 @@ export default function Words() {
             <FlatList
                 data={data}
                 contentContainerStyle={styles.listContent}
-                keyExtractor={(item: any) => item.id}
+                keyExtractor={(item: any) => item.flatKey}
                 renderItem={({ item, index }: any) => (
                     <Card animated delay={200 + (index * 50)} style={item.type === 'folder' ? [styles.folderCard, { borderColor: theme.amber100 }] : styles.wordCard}>
                         {item.type === 'folder' ? (

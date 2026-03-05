@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useThemeStore } from '../stores/themeStore';
 
 export const lightTheme = {
@@ -68,11 +68,20 @@ export const commonStyles = StyleSheet.create({
     card: {
         borderRadius: 28,
         padding: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.1,
-        shadowRadius: 16,
-        elevation: 5,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.1,
+                shadowRadius: 16,
+            },
+            android: {
+                elevation: 5,
+            },
+            web: {
+                boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+            }
+        }),
         borderWidth: 1,
     },
     button: {

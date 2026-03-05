@@ -1,7 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -43,7 +43,7 @@ export default function Profile() {
             showsVerticalScrollIndicator={false}
         >
             <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
-                <View style={[styles.avatarContainer, { shadowColor: theme.primary }]}>
+                <View style={[styles.avatarContainer, Platform.OS === 'ios' ? { shadowColor: theme.primary } : {}]}>
                     <View style={[styles.avatar, { backgroundColor: theme.indigo50, borderColor: theme.indigo100 }]}>
                         <Text style={styles.avatarEmoji}>🎓</Text>
                     </View>
@@ -146,10 +146,16 @@ const styles = StyleSheet.create({
         padding: 4,
         borderRadius: 60,
         marginBottom: 16,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.15,
-        shadowRadius: 16,
-        elevation: 8,
+        ...Platform.select({
+            ios: {
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.15,
+                shadowRadius: 16,
+            },
+            android: {
+                elevation: 8,
+            }
+        }),
     },
     avatar: {
         width: 100,

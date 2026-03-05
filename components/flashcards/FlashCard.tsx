@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '100%',
         height: 500, // Légèrement plus haut
-        perspective: 1000, // Ajoute un effet 3D plus réaliste
+        transform: [{ perspective: 1000 }], // Ajoute un effet 3D plus réaliste via transform
     },
     card: {
         position: 'absolute',

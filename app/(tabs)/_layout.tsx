@@ -39,12 +39,20 @@ export default function TabLayout() {
         borderTopWidth: 0,
         paddingTop: 8,
 
-        // Shadow for premium look
-        shadowColor: theme.primary,
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 15,
-        elevation: 10,
+        ...Platform.select({
+          ios: {
+            shadowColor: theme.primary,
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.1,
+            shadowRadius: 15,
+          },
+          android: {
+            elevation: 10,
+          },
+          web: {
+            boxShadow: `0 8px 15px 0 ${theme.primary}1A`,
+          }
+        }),
       },
     }}>
       <Tabs.Screen
