@@ -1,8 +1,8 @@
 import { Alert } from 'react-native';
 
-// URL de production (mise à jour pour correspondre au domaine sans doublon /api si nécessaire)
-// Si votre proxy reverse (Nginx/etc) fait déjà le mapping vers /api, supprimez le suffixe /api ici.
-const API_URL = 'https://api.smartrevision.app/api';
+// URL de secours via IP directe car le certificat SSL de api.smartrevision.app est invalide (chaîne de certifs incomplète)
+// Une fois le SSL corrigé (utiliser fullchain.pem sur le serveur), repassez en HTTPS.
+const API_URL = 'http://161.35.171.157:3000/api';
 
 const headers = {
     'Content-Type': 'application/json',
