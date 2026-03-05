@@ -1,4 +1,4 @@
-name: Build & Distribute Android App (NOUVEAU)
+name: Build & Distribute Android App
 
 on:
   workflow_dispatch:
@@ -21,8 +21,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set API URL
-        run: echo "EXPO_PUBLIC_API_URL=https://api.smartrevision.app/api" >> $GITHUB_ENV
+      - name: Create .env file
+        run: echo "EXPO_PUBLIC_API_URL=https://api.smartrevision.app/api" > .env
+        working-directory: .
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -32,7 +33,7 @@ jobs:
           cache-dependency-path: './package-lock.json'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: .
 
       - name: Set up JDK 17
@@ -48,9 +49,15 @@ jobs:
       - name: Build Android APK (Release)
         run: ./gradlew assembleRelease
 
-      - name: Upload Artifact to Firebase App Distribution
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
-          token: ${{ secrets.FIREBASE_TOKEN }} # Utilisation du Token (plus fiable)
+          token: ${{ secrets.FIREBASE_TOKEN }}
           file: android/app/build/outputs/apk/release/app-release.apk
