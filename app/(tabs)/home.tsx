@@ -54,7 +54,7 @@ export default function Home() {
             refreshControl={<RefreshControl refreshing={isLoadingReviews} onRefresh={refetchReviews} tintColor={theme.primary} />}
             showsVerticalScrollIndicator={false}
         >
-            <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
+            <Animated.View entering={FadeInDown.delay(100).duration(400)} style={styles.header}>
                 <View>
                     <Animated.Text style={[styles.dateText, animatedSubTextStyle]}>{formatDate()}</Animated.Text>
                     <Animated.Text style={[styles.greeting, animatedTextStyle]}>Bonjour ! 👋</Animated.Text>
@@ -108,7 +108,7 @@ export default function Home() {
                 </Card>
             </TouchableOpacity>
 
-            <Animated.Text style={[styles.sectionTitle, animatedTextStyle]} entering={FadeInRight.delay(300).springify()}>Ma Progression</Animated.Text>
+            <Animated.Text style={[styles.sectionTitle, animatedTextStyle]} entering={FadeInRight.delay(300).duration(400)}>Ma Progression</Animated.Text>
 
             <View style={styles.statsGrid}>
                 <Card animated delay={400} style={[styles.statCard, { backgroundColor: theme.emerald100, borderColor: theme.success }]}>
@@ -128,9 +128,9 @@ export default function Home() {
                 </Card>
             </View>
 
-            <Animated.Text style={[styles.sectionTitle, animatedTextStyle]} entering={FadeInRight.delay(700).springify()}>Actions Rapides</Animated.Text>
+            <Animated.Text style={[styles.sectionTitle, animatedTextStyle]} entering={FadeInRight.delay(700).duration(400)}>Actions Rapides</Animated.Text>
 
-            <Animated.View entering={FadeInDown.delay(800).springify()} style={styles.quickActions}>
+            <Animated.View entering={FadeInDown.delay(800).duration(400)} style={styles.quickActions}>
                 <TouchableOpacity style={[styles.actionItem, { width: actionItemWidth }]} onPress={() => router.push('/(tabs)/words')}>
                     <View style={[styles.actionIcon, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight, borderWidth: 2 }]}>
                         <FontAwesome name="folder-open" size={24} color={theme.primary} />
@@ -194,10 +194,16 @@ const styles = StyleSheet.create({
         padding: 28,
         borderRadius: 32,
         marginBottom: 40,
-        shadowOffset: { width: 0, height: 12 },
-        shadowOpacity: 0.4,
-        shadowRadius: 20,
-        elevation: 10,
+        ...Platform.select({
+            ios: {
+                shadowOffset: { width: 0, height: 12 },
+                shadowOpacity: 0.4,
+                shadowRadius: 20,
+            },
+            android: {
+                elevation: 10,
+            }
+        }),
         borderWidth: 0,
     },
     mainCardHeader: {

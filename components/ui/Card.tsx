@@ -23,7 +23,7 @@ export const Card = ({ children, style, delay = 0, animated = false, ...props }:
     if (animated) {
         return (
             <Animated.View
-                entering={FadeInDown.delay(delay).springify()}
+                entering={FadeInDown.delay(delay).duration(400)}
                 style={[commonStyles.card, animatedStyle, style]}
                 {...props}
             >

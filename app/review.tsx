@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useReviewSession } from '../hooks/useReviewSession';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as Speech from 'expo-speech';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
+import { DifficultyButtons } from '../components/flashcards/DifficultyButtons';
 import { FlashCard } from '../components/flashcards/FlashCard';
 import { MCQReview } from '../components/flashcards/MCQReview';
-import { DifficultyButtons } from '../components/flashcards/DifficultyButtons';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { useReviewSession } from '../hooks/useReviewSession';
 import { Difficulty } from '../utils/sm2';
-import { useTheme, commonStyles } from '../utils/styles';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import * as Speech from 'expo-speech';
-import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
+import { commonStyles, useTheme } from '../utils/styles';
 
 type ReviewMode = 'flashcard' | 'qcm-eng' | 'qcm-fra';
 
@@ -87,7 +87,7 @@ export default function Review() {
 
     if (!isLoadingReviews && (!dueReviews || dueReviews.length === 0) && sessionQueue.length === 0) {
         return (
-            <Animated.View entering={FadeInDown.springify()} style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
+            <Animated.View entering={FadeInDown.duration(400)} style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
                 <View style={[styles.iconCircle, { backgroundColor: theme.emerald100 }]}>
                     <FontAwesome name="check" size={60} color={theme.success} />
                 </View>
@@ -103,7 +103,7 @@ export default function Review() {
     if (!mode && !sessionComplete) {
         return (
             <View style={[commonStyles.container, styles.modeSelection, { backgroundColor: theme.background }]}>
-                <Animated.Text entering={FadeInDown.delay(100).springify()} style={[styles.selectionTitle, { color: theme.text }]}>Choisissez un mode</Animated.Text>
+                <Animated.Text entering={FadeInDown.delay(100).duration(400)} style={[styles.selectionTitle, { color: theme.text }]}>Choisissez un mode</Animated.Text>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={() => setMode('flashcard')}>
                     <Card animated delay={200} style={[styles.modeCard, { borderColor: theme.indigo100, borderWidth: 2 }]}>
@@ -144,7 +144,7 @@ export default function Review() {
                     </Card>
                 </TouchableOpacity>
 
-                <Animated.View entering={FadeInDown.delay(500).springify()}>
+                <Animated.View entering={FadeInDown.delay(500).duration(400)}>
                     <Button title="Annuler" variant="ghost" onPress={() => router.back()} style={{ marginTop: 20 }} />
                 </Animated.View>
             </View>
@@ -153,7 +153,7 @@ export default function Review() {
 
     if (sessionComplete) {
         return (
-            <Animated.View entering={ZoomIn.springify()} style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
+            <Animated.View entering={ZoomIn.duration(400)} style={[commonStyles.container, styles.center, { backgroundColor: theme.background }]}>
                 <Text style={styles.celebrationEmoji}>🎉</Text>
                 <Text style={[styles.completeTitle, { color: theme.text }]}>Session terminée !</Text>
                 <Text style={[styles.completeSubtitle, { color: theme.textSecondary }]}>
@@ -198,11 +198,11 @@ export default function Review() {
                             exampleSentence={currentCard.example_sentence}
                             onFlip={setIsFlipped}
                         />
-                         <TouchableOpacity 
-                            style={[styles.speakButtonOverlay, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight }]} 
+                        <TouchableOpacity
+                            style={[styles.speakButtonOverlay, { backgroundColor: theme.indigo50, borderColor: theme.primaryLight }]}
                             onPress={() => speak(currentCard.english_word)}
                         >
-                             <FontAwesome name="volume-up" size={20} color={theme.primary} />
+                            <FontAwesome name="volume-up" size={20} color={theme.primary} />
                         </TouchableOpacity>
                     </View>
                 ) : (

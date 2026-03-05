@@ -96,7 +96,7 @@ export default function Words() {
 
     return (
         <View style={[commonStyles.container, { backgroundColor: theme.background }]}>
-            <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
+            <Animated.View entering={FadeInDown.delay(100).duration(400)} style={styles.header}>
                 <Animated.Text style={[styles.title, animatedTextStyle]}>Explorateur</Animated.Text>
                 <View style={styles.headerActions}>
                     <TouchableOpacity
@@ -150,7 +150,7 @@ export default function Words() {
             </View>
 
             {isCreatingFolder && (
-                <Animated.View entering={FadeInDown.springify()}>
+                <Animated.View entering={FadeInDown.duration(400)}>
                     <Card style={[styles.createFolderCard, { backgroundColor: theme.indigo50, borderColor: theme.indigo100 }]}>
                         <TextInput
                             style={[styles.folderInput, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}

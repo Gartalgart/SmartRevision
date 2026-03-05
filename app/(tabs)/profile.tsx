@@ -42,7 +42,7 @@ export default function Profile() {
             refreshControl={<RefreshControl refreshing={isLoadingReviews} onRefresh={refetchReviews} tintColor={theme.primary} />}
             showsVerticalScrollIndicator={false}
         >
-            <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
+            <Animated.View entering={FadeInDown.delay(100).duration(400)} style={styles.header}>
                 <View style={[styles.avatarContainer, Platform.OS === 'ios' ? { shadowColor: theme.primary } : {}]}>
                     <View style={[styles.avatar, { backgroundColor: theme.indigo50, borderColor: theme.indigo100 }]}>
                         <Text style={styles.avatarEmoji}>🎓</Text>
@@ -52,7 +52,7 @@ export default function Profile() {
                 <Animated.Text style={[styles.userSubtitle, animatedSubTextStyle]}>Membre depuis aujourd'hui</Animated.Text>
             </Animated.View>
 
-            <Animated.View entering={FadeInDown.delay(150).springify()}>
+            <Animated.View entering={FadeInDown.delay(150).duration(400)}>
                 <Card style={styles.settingsCard}>
                     <View style={styles.settingRow}>
                         <View style={styles.settingInfo}>
@@ -69,9 +69,9 @@ export default function Profile() {
                 </Card>
             </Animated.View>
 
-            <Animated.Text entering={FadeInDown.delay(200).springify()} style={[styles.sectionTitle, { color: theme.text }]}>Statistiques Globales</Animated.Text>
+            <Animated.Text entering={FadeInDown.delay(200).duration(400)} style={[styles.sectionTitle, { color: theme.text }]}>Statistiques Globales</Animated.Text>
 
-            <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.overviewGrid}>
+            <Animated.View entering={FadeInDown.delay(300).duration(400)} style={styles.overviewGrid}>
                 <Card style={[styles.overviewCard, { borderColor: theme.indigo100, borderWidth: 2 }]}>
                     <Animated.Text style={[styles.overviewValue, { color: theme.primary }]}>{total}</Animated.Text>
                     <Animated.Text style={[styles.overviewLabel, animatedSubTextStyle]}>Mots Total</Animated.Text>
@@ -82,9 +82,9 @@ export default function Profile() {
                 </Card>
             </Animated.View>
 
-            <Animated.Text entering={FadeInDown.delay(400).springify()} style={[styles.sectionTitle, { color: theme.text }]}>Progression</Animated.Text>
+            <Animated.Text entering={FadeInDown.delay(400).duration(400)} style={[styles.sectionTitle, { color: theme.text }]}>Progression</Animated.Text>
 
-            <Animated.View entering={FadeInDown.delay(500).springify()}>
+            <Animated.View entering={FadeInDown.delay(500).duration(400)}>
                 <Card style={styles.chartCard}>
                     <View style={styles.chartBarContainer}>
                         {breakdown.mastered > 0 && <View style={[styles.chartSegment, { flex: breakdown.mastered, backgroundColor: theme.success, borderTopLeftRadius: 12, borderBottomLeftRadius: 12 }]} />}
@@ -119,7 +119,7 @@ export default function Profile() {
                 </Card>
             </Animated.View>
 
-            <Animated.View entering={FadeInDown.delay(600).springify()} style={styles.actionContainer}>
+            <Animated.View entering={FadeInDown.delay(600).duration(400)} style={styles.actionContainer}>
                 <Button
                     title="Déconnexion"
                     variant="danger"
