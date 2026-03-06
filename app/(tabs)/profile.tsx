@@ -28,7 +28,7 @@ export default function Profile() {
 
     return (
         <ScrollView
-            style={commonStyles.container}
+            style={[commonStyles.container, { backgroundColor: theme.background }]}
             contentContainerStyle={styles.scrollContent}
             refreshControl={<RefreshControl refreshing={isLoadingReviews} onRefresh={refetchReviews} tintColor={theme.primary} />}
             showsVerticalScrollIndicator={false}
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         paddingHorizontal: 20,
         paddingTop: 60,
-        paddingBottom: 60,
+        paddingBottom: 120,
     },
     header: {
         alignItems: 'center',

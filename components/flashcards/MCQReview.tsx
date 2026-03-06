@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { VocabularyItem } from '../../services/vocabulary.service';
-import { colors } from '../../utils/styles';
+import { useTheme } from '../../utils/styles';
 
 interface MCQReviewProps {
     item: VocabularyItem;
@@ -11,6 +11,7 @@ interface MCQReviewProps {
 }
 
 export const MCQReview = ({ item, allWords, direction, onAnswer }: MCQReviewProps) => {
+    const theme = useTheme();
     const [options, setOptions] = useState<string[]>([]);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
@@ -47,8 +48,8 @@ export const MCQReview = ({ item, allWords, direction, onAnswer }: MCQReviewProp
     return (
         <View style={styles.container}>
             <View style={styles.questionContainer}>
-                <Text style={styles.questionLabel}>Traduisez ce mot</Text>
-                <Text style={styles.questionWord}>{question}</Text>
+                <Text style={[styles.questionLabel, { color: theme.textSecondary }]}>Traduisez ce mot</Text>
+                <Text style={[styles.questionWord, { color: theme.text }]}>{question}</Text>
             </View>
 
             <View style={styles.optionsGrid}>
@@ -56,18 +57,18 @@ export const MCQReview = ({ item, allWords, direction, onAnswer }: MCQReviewProp
                     const isSelected = selectedOption === option;
                     const isCorrect = option === correctAnswer;
 
-                    let buttonStyle: any = styles.optionButton;
-                    let textStyle: any = styles.optionText;
+                    let buttonStyle: any = [styles.optionButton, { backgroundColor: theme.card, borderColor: theme.border }];
+                    let textStyle: any = [styles.optionText, { color: theme.text }];
 
                     if (selectedOption) {
                         if (isCorrect) {
-                            buttonStyle = [styles.optionButton, styles.correctButton];
-                            textStyle = [styles.optionText, styles.correctText];
+                            buttonStyle.push({ backgroundColor: theme.emerald100, borderColor: theme.success, borderBottomColor: theme.isDark ? '#047857' : '#059669' });
+                            textStyle.push({ color: theme.isDark ? '#34D399' : '#065F46' });
                         } else if (isSelected) {
-                            buttonStyle = [styles.optionButton, styles.wrongButton];
-                            textStyle = [styles.optionText, styles.wrongText];
+                            buttonStyle.push({ backgroundColor: theme.isDark ? '#451a1a' : '#FFE4E6', borderColor: theme.danger, borderBottomColor: theme.isDark ? '#BE123C' : '#E11D48' });
+                            textStyle.push({ color: theme.isDark ? '#F87171' : '#9F1239' });
                         } else {
-                            buttonStyle = [styles.optionButton, { opacity: 0.5 }];
+                            buttonStyle.push({ opacity: 0.5 });
                         }
                     }
 
@@ -101,7 +102,6 @@ const styles = StyleSheet.create({
     },
     questionLabel: {
         fontSize: 18,
-        color: colors.textSecondary,
         fontWeight: '800',
         textTransform: 'uppercase',
         letterSpacing: 1,
@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
     questionWord: {
         fontSize: 40,
         fontWeight: '900',
-        color: colors.text,
         textAlign: 'center',
     },
     optionsGrid: {
@@ -118,12 +117,10 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     optionButton: {
-        backgroundColor: colors.card,
         paddingVertical: 20,
         paddingHorizontal: 24,
         borderRadius: 20,
         borderWidth: 2,
-        borderColor: colors.border,
         borderBottomWidth: 6,
         alignItems: 'center',
         width: '100%',
@@ -131,22 +128,5 @@ const styles = StyleSheet.create({
     optionText: {
         fontSize: 18,
         fontWeight: '800',
-        color: colors.text,
-    },
-    correctButton: {
-        backgroundColor: '#D1FAE5',
-        borderColor: colors.success,
-        borderBottomColor: '#059669',
-    },
-    correctText: {
-        color: '#065F46',
-    },
-    wrongButton: {
-        backgroundColor: '#FFE4E6',
-        borderColor: colors.danger,
-        borderBottomColor: '#E11D48',
-    },
-    wrongText: {
-        color: '#9F1239',
     },
 });
